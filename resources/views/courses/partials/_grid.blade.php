@@ -6,10 +6,11 @@
             <a class="border rounded p-4 hover:bg-gray-50 block" href="{{ route('courses.show', $course) }}">
                 <div class="font-medium">{{ $course->title }}</div>
                 <div class="text-sm text-gray-600">
-                    {{ $course->published ? 'Published' : 'Draft' }}
+                    {{ $course->published ? '🟢 Published' : '🔘 Draft' }}
                     @isset($course->students_count)
                         • {{ $course->students_count }} students
                     @endisset
+                    <i>• ✍︎: {{ $course->instructor->name }}</i>
                 </div>
             </a>
         @endforeach

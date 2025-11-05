@@ -22,7 +22,7 @@ class LessonPolicy
     public function view(User $user, Lesson $lesson): bool
     {
         // allow if user is instructor or enrolled in the course
-        return $lesson->course->instructor_id === optional($user)->id ||
+        return $user->isInstructor() ||
             $lesson->course->students->contains($user);
     }
 

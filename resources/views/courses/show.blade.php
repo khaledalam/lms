@@ -24,7 +24,7 @@
                         ({{ $course->students->count() }})</a>
                     <a href="{{ route('courses.lessons.create', $course) }}"
                         class="px-3 py-2 center bg-black text-white rounded" style="width: 95px;">+ Lesson</a>
-                @elseif(!$isEnrolled)
+                @elseif(!$isEnrolled && Auth::user()->isStudent())
                     <form method="POST" action="{{ route('courses.enroll', $course) }}" class="inline">
                         @csrf
                         <button class="px-3 py-2 bg-black text-white rounded">Enroll</button>

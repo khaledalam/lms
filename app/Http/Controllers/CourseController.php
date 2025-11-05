@@ -16,18 +16,25 @@ class CourseController extends Controller
     {
         $user = Auth::user();
 
-        // Students see only published; instructors see their own (all)
         if ($user->isInstructor()) {
             $myCourses = Course::where('instructor_id', $user->id)
-                ->withCount('students')->latest()->paginate(10);
-            $published = Course::published()->latest()->paginate(10);
+                ->withCount('students')->latest()->paginate(3);
+
+            $published = Course::published()
+                ->withCount('students')->latest()->paginate(3);
 
             return view('courses.index', compact('myCourses', 'published'));
         }
 
-        $courses = Course::published()->withCount('students')->latest()->paginate(12);
+        // Student: split into enrolled vs available
+        $enrolled = $user->coursesEnrolled()
+            ->withCount('students')->latest()->paginate(12);
 
-        return view('courses.index', compact('courses'));
+        $available = Course::published()
+            ->whereDoesntHave('students', fn($q) => $q->where('users.id', $user->id))
+            ->withCount('students')->latest()->paginate(12);
+
+        return view('courses.index', compact('enrolled', 'available'));
     }
 
     /**

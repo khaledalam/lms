@@ -1,14 +1,18 @@
 <x-app-layout>
-
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Course') }}: {{ $lesson->course->title }}<br />↳ {{ __('Lesson') }}: {{ $lesson->title }}
+        </h2>
+    </x-slot>
     <div class="max-w-5xl mx-auto py-8 space-6">
         @if (session('success'))
             <div class="bg-green-100 p-3">{{ session('success') }}</div>
         @endif
 
-        <a href="{{ route('courses.show', $lesson->course) }}" class="text-sm text-blue-600 hover:underline">← Back to
+        <a href="{{ route('courses.show', $lesson->course) }}" class="text-sm text-blue-600 hover:underline mb-4">← Back to
             course</a>
 
-        <h1 class="text-2xl font-semibold">{{ $lesson->title }}</h1>
+        <h1 class="text-2xl font-semibold mt-4">{{ $lesson->title }}</h1>
         <article class="prose max-w-none">
             {!! nl2br(e($lesson->content)) !!}
         </article>

@@ -67,9 +67,9 @@ class DemoSeeder extends Seeder
         $students    = collect([$student1, $student2, $student3]);
 
         // --- Courses + Lessons + Enrollments + Comments ---------------------
-        // Create 5 courses owned by random instructor
+        // Create 10 courses owned by random instructor
         $courses = collect();
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $owner  = $instructors->random();
             /** @var Course $course */
             $course = Course::factory()->create([
@@ -104,7 +104,7 @@ class DemoSeeder extends Seeder
             }
         }
 
-        $this->command?->info('Demo data seeded: 2 instructors, 3 students, 5 courses with lessons, enrollments, comments.');
+        $this->command?->info('Demo data seeded: 2 instructors, 3 students, 10 courses with lessons, enrollments, comments.');
         $this->command?->info('Login with instructor1@example.com / password or student1@example.com / password');
     }
 }
