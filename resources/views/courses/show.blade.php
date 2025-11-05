@@ -35,7 +35,9 @@
 
         <div>
             <h2 class="text-xl font-semibold mb-2">Lessons</h2>
-            @if ($course->lessons->isEmpty())
+            @if (!$isEnrolled && !$isInstructor)
+                <p class="text-gray-600 mb-4">⚠️ Enroll in this course to access the lessons.</p>
+            @elseif ($course->lessons->isEmpty())
                 <p class="text-gray-600">No lessons yet.</p>
             @else
                 <div class="space-y-2">

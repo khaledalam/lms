@@ -6,6 +6,7 @@ use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LessonController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', fn() => redirect()->route('courses.index'));
 
@@ -34,13 +35,21 @@ Route::middleware('auth')->group(function () {
 
     // Enroll (student-only via controller logic)
     Route::post('/courses/{course}/enroll', [EnrollmentController::class, 'store'])->name('courses.enroll');
-    
+
     // Comments on lessons
     Route::post('/lessons/{lesson}/comments', [CommentController::class, 'store'])->name('lessons.comments.store');
 
     // Instructor: view student roster
     Route::get('/courses/{course}/students', [EnrollmentController::class, 'index'])->name('courses.students');
-
 });
+
+Route::post('/run-demo-seeder', function () {
+    try {
+        Artisan::call('migrate:fresh', ['--force' => true, '--seed' => true]);
+        return response()->json(['success' => true, 'message' => 'Demo data seeded successfully!']);
+    } catch (\Throwable $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()]);
+    }
+})->name('run.demo.seeder');
 
 require __DIR__ . '/auth.php';

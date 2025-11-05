@@ -55,25 +55,88 @@
             </a>
         </div>
 
-        <hr class="mb-4" />
+        <hr class="mb-4 mt-4" />
 
         <div class="panel panel-info">
-            <div class="panel-heading">Test Credentials</div>
-            <div class="panel-body">
-                <br />
-                <p><strong>Instructor:</strong>
-                    <br />Email:
-                    <code>instructor1@example.com</code>
-                    <br>Password:
-                    <code>password</code>
+            <div class="panel-heading font-semibold text-lg mb-2 ">Test Credentials</div>
+            <div class="panel-body text-sm">
+                <p><strong>Instructors:</strong><br>
+                    Email: <code>instructor1@example.com</code><br>Password: <code>password</code><br><br>
+                    Email: <code>instructor2@example.com</code><br>Password: <code>password</code>
                 </p>
-                <br />
-                <p><strong>Student:</strong>
-                    <br>Email:
-                    <code>student1@example.com</code>
-                    <br>Password:
-                    <code>password</code>
+
+                <hr class="my-3 border-gray-300" />
+
+                <p><strong>Students:</strong><br>
+                    Email: <code>student1@example.com</code><br>Password: <code>password</code><br><br>
+                    Email: <code>student2@example.com</code><br>Password: <code>password</code>
                 </p>
             </div>
+
+            <div class="text-center mt-6">
+                <button id="runSeederBtn"
+                    class="inline-flex border items-center px-4 py-2 bg-indigo-600 text-black text-sm font-semibold rounded-md hover:bg-indigo-700 focus:outline-none">
+                    ▶ Run Demo Seeder (migrate:fresh)
+                </button>
+
+                <div id="seedProgress" class="hidden mt-3 text-gray-700 text-sm">
+                    <div class="flex items-center justify-center gap-2">
+                        <svg class="animate-spin h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                        </svg>
+                        <span>Seeding demo data...</span>
+                    </div>
+                </div>
+
+                <div id="seedResult" class="hidden mt-3 font-medium"></div>
+            </div>
+        </div>
+
+        @push('scripts')
+            <script>
+                document.getElementById('runSeederBtn').addEventListener('click', async function() {
+                    const btn = this;
+                    const progress = document.getElementById('seedProgress');
+                    const result = document.getElementById('seedResult');
+
+                    btn.disabled = true;
+                    progress.classList.remove('hidden');
+                    result.classList.add('hidden');
+
+                    try {
+                        const res = await fetch("{{ route('run.demo.seeder') }}", {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        const data = await res.json();
+                        progress.classList.add('hidden');
+                        result.classList.remove('hidden');
+
+                        if (data.success) {
+                            result.classList.remove('text-red-600');
+                            result.classList.add('text-green-600');
+                            result.textContent = '✅ ' + data.message;
+                        } else {
+                            result.classList.remove('text-green-600');
+                            result.classList.add('text-red-600');
+                            result.textContent = '❌ ' + data.message;
+                        }
+                    } catch (err) {
+                        progress.classList.add('hidden');
+                        result.classList.remove('hidden', 'text-green-600');
+                        result.classList.add('text-red-600');
+                        result.textContent = '⚠️ Error: ' + err.message;
+                    } finally {
+                        btn.disabled = false;
+                    }
+                });
+            </script>
+        @endpush
     </form>
 </x-guest-layout>

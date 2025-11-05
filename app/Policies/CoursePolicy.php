@@ -21,7 +21,21 @@ class CoursePolicy
      */
     public function view(User $user, Course $course): bool
     {
-        return $course->published || ($user && $user->id === $course->instructor_id);
+        if (!$user) {
+            return false;
+        }
+
+        // Instructor owns the course
+        if ($user->id === $course->instructor_id) {
+            return true;
+        }
+
+        return $course->published;
+
+        // Enrolled student
+        // return $course->students()
+        //     ->where('users.id', $user->id)
+        //     ->exists();
     }
 
     /**
