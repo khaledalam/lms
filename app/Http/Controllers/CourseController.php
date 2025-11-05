@@ -35,6 +35,7 @@ class CourseController extends Controller
     public function create()
     {
         $this->authorize('create', Course::class);
+
         return view('courses.create');
     }
 
@@ -52,7 +53,8 @@ class CourseController extends Controller
             'published' => (bool) $request->boolean('published'),
         ]);
 
-        return redirect()->route('courses.show', $course)->with('success', 'Course created.');
+        return redirect()->route('courses.show', $course)
+            ->with('success', 'Course created successfully.');
     }
 
     /**
@@ -61,6 +63,7 @@ class CourseController extends Controller
     public function show(Course $course)
     {
         $this->authorize('view', $course);
+
         $course->load(['lessons' => fn($q) => $q->orderBy('order')]);
         $isInstructor = (int) $course->instructor_id === (int) Auth::id();
         $isEnrolled = $course->students()->where('users.id', Auth::id())->exists();
@@ -73,6 +76,7 @@ class CourseController extends Controller
     public function edit(Course $course)
     {
         $this->authorize('update', $course);
+
         return view('courses.edit', compact('course'));
     }
     /**
@@ -81,6 +85,7 @@ class CourseController extends Controller
     public function update(StoreCourseRequest $request, Course $course)
     {
         $this->authorize('update', $course);
+
         $course->update($request->validated());
         return redirect()->route('courses.show', $course)->with('success', 'Course updated.');
     }
@@ -91,6 +96,7 @@ class CourseController extends Controller
     public function destroy(Course $course)
     {
         $this->authorize('delete', $course);
+
         $course->delete();
         return redirect()->route('courses.index')->with('success', 'Course deleted.');
     }
