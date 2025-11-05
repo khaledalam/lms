@@ -1,6 +1,1 @@
 *.sqlite*
-
-
-# Ignore IDE files
-.lh
-.history
