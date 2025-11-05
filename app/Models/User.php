@@ -119,7 +119,6 @@ class User extends Authenticatable
      */
     public function isStudent(): bool
     {
-        return true;
         return $this->role === UserRoles::STUDENT;
     }
 

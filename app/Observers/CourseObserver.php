@@ -12,16 +12,16 @@ class CourseObserver
      */
     public function creating(Course $course): void
     {
-        $base = Str::slug($course->title);
-        $slug = $base;
-        $i = 1;
-
-        while (Course::where('slug', $slug)->exists()) {
-            $slug = "{$base}-{$i}";
-            $i++;
+        if (empty($course->slug)) {
+            $base = Str::slug($course->title);
+            $slug = $base;
+            $i = 1;
+            while (Course::where('slug', $slug)->exists()) {
+                $slug = "{$base}-{$i}";
+                $i++;
+            }
+            $course->slug = $slug;
         }
-
-        $course->slug = $slug;
     }
 
     /**

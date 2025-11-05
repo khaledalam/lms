@@ -1,6 +1,10 @@
-@extends('layouts.base')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Course') }}: {{ $course->title }}
+        </h2>
+    </x-slot>
 
-@section('content')
     <div class="max-w-5xl mx-auto py-8 space-y-6">
         @if (session('success'))
             <div class="bg-green-100 p-3">{{ session('success') }}</div>
@@ -11,12 +15,12 @@
                 <h1 class="text-2xl font-semibold">{{ $course->title }}</h1>
                 <p class="text-gray-700 mt-1">{{ $course->description }}</p>
             </div>
-            <div class="space-x-2">
+            <div class="flex gap-3">
                 @if ($isInstructor)
                     <a href="{{ route('courses.edit', $course) }}" class="px-3 py-2 border rounded">Edit</a>
-                    <a href="{{ route('courses.students', $course) }}" class="px-3 py-2 border rounded">Students</a>
-                    <a href="{{ route('courses.lessons.create', $course) }}" class="px-3 py-2 bg-black text-white rounded">+
-                        Lesson</a>
+                    <a href="{{ route('courses.students', $course) }}" class="px-3 py-2 border rounded">Students ({{ $course->students->count() }})</a>
+                    <a href="{{ route('courses.lessons.create', $course) }}"
+                        class="px-3 py-2 center bg-black text-white rounded ">+ Lesson</a>
                 @elseif(!$isEnrolled)
                     <form method="POST" action="{{ route('courses.enroll', $course) }}" class="inline">
                         @csrf
@@ -37,19 +41,21 @@
                             <a href="{{ route('lessons.show', $lesson) }}" class="font-medium">{{ $lesson->order }}.
                                 {{ $lesson->title }}</a>
                             @if ($isInstructor)
-                                <div class="space-x-2">
-                                    <form method="POST" action="{{ route('lessons.move_up', $lesson) }}" class="inline">
+                                <div class="flex gap-3">
+                                    <form method="POST" action="{{ route('lessons.move_up', $lesson) }}"
+                                        class="inline">
                                         @csrf
                                         <button class="px-2 py-1 border rounded">↑</button>
                                     </form>
-                                    <form method="POST" action="{{ route('lessons.move_down', $lesson) }}" class="inline">
+                                    <form method="POST" action="{{ route('lessons.move_down', $lesson) }}"
+                                        class="inline">
                                         @csrf
                                         <button class="px-2 py-1 border rounded">↓</button>
                                     </form>
                                     <a href="{{ route('lessons.edit', $lesson) }}"
                                         class="px-2 py-1 border rounded">Edit</a>
-                                    <form method="POST" action="{{ route('lessons.destroy', $lesson) }}" class="inline"
-                                        onsubmit="return confirm('Delete this lesson?')">
+                                    <form method="POST" action="{{ route('lessons.destroy', $lesson) }}"
+                                        class="inline" onsubmit="return confirm('Delete this lesson?')">
                                         @csrf @method('DELETE')
                                         <button class="px-2 py-1 border rounded text-red-600">Delete</button>
                                     </form>
@@ -60,6 +66,5 @@
                 </div>
             @endif
         </div>
-
     </div>
-@endsection
+</x-app-layout>

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Lesson model representing a lesson within a course.
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Lesson extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
