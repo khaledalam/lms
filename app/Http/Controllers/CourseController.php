@@ -21,6 +21,7 @@ class CourseController extends Controller
             $myCourses = Course::where('instructor_id', $user->id)
                 ->withCount('students')->latest()->paginate(10);
             $published = Course::published()->latest()->paginate(10);
+
             return view('courses.index', compact('myCourses', 'published'));
         }
 
@@ -87,6 +88,7 @@ class CourseController extends Controller
         $this->authorize('update', $course);
 
         $course->update($request->validated());
+
         return redirect()->route('courses.show', $course)->with('success', 'Course updated.');
     }
 

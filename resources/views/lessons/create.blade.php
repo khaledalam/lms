@@ -1,7 +1,10 @@
-@extends('layouts.base')
+<x-app-layout>
 
-@section('content')
-    <div class="max-w-3xl mx-auto py-8">
+    <div class="max-w-5xl mx-auto py-8 space-6">
+        @if (session('success'))
+            <div class="bg-green-100 p-3">{{ session('success') }}</div>
+        @endif
+
         <h1 class="text-2xl font-semibold mb-4">New Lesson – {{ $course->title }}</h1>
 
         <form method="POST" action="{{ route('courses.lessons.store', $course) }}" class="space-y-4">
@@ -20,4 +23,4 @@
             <button class="px-4 py-2 bg-black text-white rounded">Save</button>
         </form>
     </div>
-@endsection
+</x-app-layout>

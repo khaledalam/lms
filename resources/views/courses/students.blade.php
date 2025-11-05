@@ -16,6 +16,10 @@
             <div class="bg-blue-100 p-3 mb-4">{{ session('info') }}</div>
         @endif
 
+        <div class="mb-6">
+            <a href="{{ route('courses.show', $course) }}" class="text-blue-600 hover:underline">← Back to course</a>
+        </div>
+
         @if ($students->count() === 0)
             <p class="text-gray-600">No students enrolled yet.</p>
         @else
@@ -46,9 +50,5 @@
                 {{ $students->links() }}
             </div>
         @endif
-
-        <div class="mt-6">
-            <a href="{{ route('courses.show', $course) }}" class="text-blue-600 hover:underline">← Back to course</a>
-        </div>
     </div>
 @endsection

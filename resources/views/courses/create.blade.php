@@ -6,6 +6,7 @@
         @endif
         <h1 class="text-2xl font-semibold mb-4">Create Course</h1>
 
+        <x-back-button :url="route('courses.index')">Go Back</x-back-button>
         <form method="POST" action="{{ route('courses.store') }}" class="space-y-4">
             @csrf
             <div>
@@ -20,12 +21,13 @@
                 <textarea name="description" class="w-full border rounded p-2" rows="4"></textarea>
             </div>
             <label class="inline-flex items-center gap-2">
+                <input type="hidden" name="published" value="0">
                 <input type="checkbox" name="published" value="1">
                 <span>Published</span>
             </label>
 
             <button class="px-4 py-2 bg-black text-white rounded">Save</button>
-            <x-back-button :url="route('courses.index')">Go Back</x-back-button>
+
         </form>
     </div>
 </x-app-layout>

@@ -11,6 +11,7 @@
         @endif
         <h1 class="text-2xl font-semibold mb-4">Edit Lesson – {{ $course->title }}</h1>
 
+        <x-back-button :url="route('courses.index')">Go Back</x-back-button>
         <form method="POST" action="{{ route('lessons.update', $lesson) }}" class="space-y-4">
             @csrf @method('PUT')
             <div>
@@ -26,7 +27,6 @@
                 <textarea name="content" class="w-full border rounded p-2" rows="6">{{ old('content', $lesson->content) }}</textarea>
             </div>
             <button class="px-4 py-2 bg-black text-white rounded">Update</button>
-            <x-back-button :url="route('lesson§.index')">Go Back</x-back-button>
         </form>
     </div>
 </x-app-layout>

@@ -10,18 +10,20 @@
             <div class="bg-green-100 p-3">{{ session('success') }}</div>
         @endif
 
+        <x-back-button :url="route('courses.index')">Go Back</x-back-button>
         <div class="flex items-start justify-between">
             <div>
                 <h1 class="text-2xl font-semibold">{{ $course->title }}</h1>
                 <p class="text-gray-700 mt-1">{{ $course->description }}</p>
             </div>
-            <div class="flex gap-3">
+            <div class="flex gap-3 items-center">
                 @if ($isInstructor)
                     <a href="{{ route('courses.edit', $course) }}" class="px-3 py-2 border rounded">Edit</a>
-                    <a href="{{ route('courses.students', $course) }}" class="px-3 py-2 border rounded">Students
+                    <a href="{{ route('courses.students', $course) }}" class="px-3 py-2 border rounded"
+                        style="width: 130px;">Students
                         ({{ $course->students->count() }})</a>
                     <a href="{{ route('courses.lessons.create', $course) }}"
-                        class="px-3 py-2 center bg-black text-white rounded ">+ Lesson</a>
+                        class="px-3 py-2 center bg-black text-white rounded" style="width: 95px;">+ Lesson</a>
                 @elseif(!$isEnrolled)
                     <form method="POST" action="{{ route('courses.enroll', $course) }}" class="inline">
                         @csrf
@@ -39,20 +41,23 @@
                 <div class="space-y-2">
                     @foreach ($course->lessons as $lesson)
                         <div class="border rounded p-3 flex items-center justify-between">
-                            <a href="{{ route('lessons.show', $lesson) }}" class="font-medium">{{ $lesson->order }}.
+                            <a href="{{ route('lessons.show', $lesson) }}"
+                                class="font-medium underline">{{ $lesson->order }}.
                                 {{ $lesson->title }}</a>
                             @if ($isInstructor)
-                                <div class="flex gap-3">
-                                    <form method="POST" action="{{ route('lessons.move_up', $lesson) }}"
-                                        class="inline">
-                                        @csrf
-                                        <button class="px-2 py-1 border rounded">↑</button>
-                                    </form>
-                                    <form method="POST" action="{{ route('lessons.move_down', $lesson) }}"
-                                        class="inline">
-                                        @csrf
-                                        <button class="px-2 py-1 border rounded">↓</button>
-                                    </form>
+                                <div class="flex gap-3 items-center">
+                                    @if ($course->lessons->count() > 1)
+                                        <form method="POST" action="{{ route('lessons.move_up', $lesson) }}"
+                                            class="inline">
+                                            @csrf
+                                            <button class="px-2 py-1 border rounded">↑</button>
+                                        </form>
+                                        <form method="POST" action="{{ route('lessons.move_down', $lesson) }}"
+                                            class="inline">
+                                            @csrf
+                                            <button class="px-2 py-1 border rounded">↓</button>
+                                        </form>
+                                    @endif
                                     <a href="{{ route('lessons.edit', $lesson) }}"
                                         class="px-2 py-1 border rounded">Edit</a>
                                     <form method="POST" action="{{ route('lessons.destroy', $lesson) }}"
@@ -68,6 +73,5 @@
             @endif
         </div>
 
-        <x-back-button :url="route('courses.index')">Go Back</x-back-button>
     </div>
 </x-app-layout>

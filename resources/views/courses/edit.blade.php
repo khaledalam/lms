@@ -6,6 +6,7 @@
         @endif
         <h1 class="text-2xl font-semibold mb-4">Edit Course</h1>
 
+        <x-back-button :url="route('courses.index')">Go Back</x-back-button>
         <form method="POST" action="{{ route('courses.update', $course) }}" class="space-y-4">
             @csrf @method('PUT')
             <div>
@@ -21,12 +22,12 @@
                 <textarea name="description" class="w-full border rounded p-2" rows="4">{{ old('description', $course->description) }}</textarea>
             </div>
             <label class="inline-flex items-center gap-2">
+                <input type="hidden" name="published" value="0">
                 <input type="checkbox" name="published" value="1" {{ $course->published ? 'checked' : '' }}>
                 <span>Published</span>
             </label>
 
             <button class="px-4 py-2 bg-black text-white rounded">Update</button>
-            <x-back-button :url="route('courses.index')">Go Back</x-back-button>
         </form>
     </div>
 </x-app-layout>
