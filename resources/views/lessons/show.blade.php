@@ -1,7 +1,6 @@
-@extends('layouts.base')
+<x-app-layout>
 
-@section('content')
-    <div class="max-w-4xl mx-auto py-8 space-y-6">
+    <div class="max-w-5xl mx-auto py-8 space-6">
         @if (session('success'))
             <div class="bg-green-100 p-3">{{ session('success') }}</div>
         @endif
@@ -45,4 +44,4 @@
             </form>
         @endauth
     </div>
-@endsection
+</x-app-layout>

@@ -18,7 +18,8 @@
             <div class="flex gap-3">
                 @if ($isInstructor)
                     <a href="{{ route('courses.edit', $course) }}" class="px-3 py-2 border rounded">Edit</a>
-                    <a href="{{ route('courses.students', $course) }}" class="px-3 py-2 border rounded">Students ({{ $course->students->count() }})</a>
+                    <a href="{{ route('courses.students', $course) }}" class="px-3 py-2 border rounded">Students
+                        ({{ $course->students->count() }})</a>
                     <a href="{{ route('courses.lessons.create', $course) }}"
                         class="px-3 py-2 center bg-black text-white rounded ">+ Lesson</a>
                 @elseif(!$isEnrolled)
@@ -66,5 +67,7 @@
                 </div>
             @endif
         </div>
+
+        <x-back-button :url="route('courses.index')">Go Back</x-back-button>
     </div>
 </x-app-layout>

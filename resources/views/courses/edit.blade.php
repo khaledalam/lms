@@ -26,7 +26,7 @@
             </label>
 
             <button class="px-4 py-2 bg-black text-white rounded">Update</button>
-            @include('components.back-button', ['url' => url()->previous()]
+            <x-back-button :url="route('courses.index')">Go Back</x-back-button>
         </form>
     </div>
 </x-app-layout>

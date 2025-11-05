@@ -26,7 +26,7 @@
                 <textarea name="content" class="w-full border rounded p-2" rows="6">{{ old('content', $lesson->content) }}</textarea>
             </div>
             <button class="px-4 py-2 bg-black text-white rounded">Update</button>
-            @include('components.back-button', ['url' => url()->previous()]
+            <x-back-button :url="route('lesson§.index')">Go Back</x-back-button>
         </form>
     </div>
 </x-app-layout>

@@ -1,3 +1,8 @@
-<a href="{{ url()->previous() }}" class="p-2 inline-flex items-center text-gray-600 hover:text-gray-900">
-    ← Back
+@php
+    $target = $url ?? url()->previous();
+@endphp
+
+<a href="{{ $target }}"
+    {{ $attributes->merge(['class' => 'inline-flex items-center text-blue-600 hover:underline']) }}>
+    ← {{ $slot ?: 'Back' }}
 </a>
