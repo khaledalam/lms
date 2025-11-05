@@ -46,12 +46,34 @@
 
         </div>
 
+        <hr class="mb-4 mt-4" />
 
-        <div class="flex items-center justify-center mt-4">
+        <div class="flex items-center justify-center mb-4">
             <a href="{{ route('register') }}"
                 class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ms-3">
                 {{ __("Don't have an account? Register") }}
+            </a>
         </div>
-        
+
+        <hr class="mb-4" />
+
+        <div class="panel panel-info">
+            <div class="panel-heading">Test Credentials</div>
+            <div class="panel-body">
+                <br />
+                <p><strong>Instructor:</strong>
+                    <br />Email:
+                    <code>instructor1@example.com</code>
+                    <br>Password:
+                    <code>password</code>
+                </p>
+                <br />
+                <p><strong>Student:</strong>
+                    <br>Email:
+                    <code>student1@example.com</code>
+                    <br>Password:
+                    <code>password</code>
+                </p>
+            </div>
     </form>
 </x-guest-layout>

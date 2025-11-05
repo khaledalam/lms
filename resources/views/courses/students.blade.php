@@ -16,7 +16,7 @@
             <div class="bg-blue-100 p-3 mb-4">{{ session('info') }}</div>
         @endif
 
-        <div class="mb-6">
+        <div class="mb-4">
             <a href="{{ route('courses.show', $course) }}" class="text-blue-600 hover:underline">← Back to course</a>
         </div>
 
