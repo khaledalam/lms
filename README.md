@@ -4,8 +4,8 @@ A mini learning management system built with **Laravel 12**, featuring lessons, 
 
 ## Demo Video
 
-[Watch the demo video](docs/lms-demo.mp4)
-<video src="./docs/lms-demo.mp4" controls width="700">
+[Watch the demo video](docs/lms-demo-compressed.mp4)
+<video src="./docs/lms-demo-compressed.mp4" controls width="700">
   Your browser does not support the video tag.
 </video>
 
