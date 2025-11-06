@@ -1,32 +1,56 @@
 # API (LMS) — Documentation
 
-All endpoints are JSON and live under `/api/*`.
-
-- **Base URL (local):** `http://localhost:8000`
-- **Auth:** Bearer token via **Laravel Sanctum** (personal access tokens)
-- **Content-Type:** `application/json`
-
-> If you haven’t finished Sanctum setup, you can still test web routes with session auth. For API testing, generate a **personal access token** as shown below.
+All endpoints are JSON and live under `/api/*` unless noted.  
+- **Base URL (local):** `http://localhost:8000`  
+- **Auth:** Bearer token via **Laravel Sanctum** (personal access tokens)  
+- **Default Content-Type:** `application/json`
 
 ---
 
-## Auth (Sanctum token example)
+## Auth
 
-### Create a token (via Tinker)
-```bash
-php artisan tinker
->>> $u = \App\Models\User::where('email','instructor1@example.com')->first();
->>> $token = $u->createToken('cli')->plainTextToken;
->>> $token
-"PASTE_ME"
+### 1) Get a token via API
+**POST** `/api/auth/token`
+
+**Body (JSON)**
+```json
+{
+  "email": "instructor1@example.com",
+  "password": "password"
+}
 ```
 
-Use that value in the `Authorization: Bearer` header.
+**Response (200)**
+```json
+{ "token": "PASTE_ME" }
+```
 
-### Example header
+> **Postman auto‑save:** In the collection, the **Tests** tab for this request saves the returned token to both the **environment** and **collection** variables named `token`. You can reuse it in headers as `Bearer {{token}}`.
+```js
+// Parse JSON response
+const response = pm.response.json();
+
+// Save token to environment and collection variables if present
+if (response.token) {
+  pm.environment.set("token", response.token);
+  pm.collectionVariables.set("token", response.token);
+  console.log("Token saved to environment and collection variables");
+} else {
+  console.warn("⚠️ No token field found in response");
+}
+```
+
+### 2) Example header
 ```
 Authorization: Bearer PASTE_ME
 Accept: application/json
+```
+
+> You can also generate a token manually via Tinker if needed:
+```bash
+php artisan tinker
+>>> $u = \App\Models\User::where('email','instructor1@example.com')->first();
+>>> $token = $u->createToken('cli')->plainTextToken;  // copy this value
 ```
 
 ---
@@ -40,12 +64,12 @@ Returns a list of courses. Supports simple search and published filtering.
 - `search` (optional): substring match on title/description
 - `published` (optional): `1` or `0`
 
-**Request**
+**Example**
 ```bash
-curl -s   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   "http://localhost:8000/api/courses?search=php&published=1"
+curl -H "Authorization: Bearer $TOKEN"      -H "Accept: application/json"      "http://localhost:8000/api/courses?search=php&published=1"
 ```
 
-**Response 200**
+**Response 200 (array)**
 ```json
 [
   {
@@ -62,7 +86,7 @@ curl -s   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   
 ---
 
 ### POST `/api/courses`  *(instructor only)*
-Creates a course. Only users with role `instructor` are authorized.
+Creates a course.
 
 **Body**
 ```json
@@ -73,9 +97,9 @@ Creates a course. Only users with role `instructor` are authorized.
 }
 ```
 
-**Request**
+**Example**
 ```bash
-curl -s -X POST   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   -H "Content-Type: application/json"   -d '{"title":"API Design 101","description":"Structure, versioning, docs.","published":true}'   http://localhost:8000/api/courses
+curl -X POST   -H "Authorization: Bearer $TOKEN"   -H "Accept: application/json"   -H "Content-Type: application/json"   -d '{"title":"API Design 101","description":"Structure, versioning, docs.","published":true}'   http://localhost:8000/api/courses
 ```
 
 **Response 201**
@@ -94,9 +118,8 @@ curl -s -X POST   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/
 
 ### GET `/api/courses/{course}`
 Fetch a single course.
-
 ```bash
-curl -s   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   http://localhost:8000/api/courses/12
+curl -H "Authorization: Bearer $TOKEN"      -H "Accept: application/json"      http://localhost:8000/api/courses/12
 ```
 
 **Response 200**
@@ -115,7 +138,7 @@ curl -s   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   
 
 ### PATCH `/api/courses/{course}`  *(instructor owner)*
 ```bash
-curl -s -X PATCH   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   -H "Content-Type: application/json"   -d '{"published":false}'   http://localhost:8000/api/courses/12
+curl -X PATCH   -H "Authorization: Bearer $TOKEN"   -H "Accept: application/json"   -H "Content-Type: application/json"   -d '{"published":false}'   http://localhost:8000/api/courses/12
 ```
 
 **Response 200** – updated course JSON.
@@ -124,20 +147,19 @@ curl -s -X PATCH   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application
 
 ### DELETE `/api/courses/{course}`  *(instructor owner)*
 ```bash
-curl -s -X DELETE   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   http://localhost:8000/api/courses/12
+curl -X DELETE   -H "Authorization: Bearer $TOKEN"   -H "Accept: application/json"   http://localhost:8000/api/courses/12
 ```
-
 **Response 204** – no content.
 
 ---
 
-## Nested: Lessons
+## Lessons
 
 ### GET `/api/courses/{course}/lessons`
+List lessons of a course.
 ```bash
-curl -s   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   http://localhost:8000/api/courses/12/lessons
+curl -H "Authorization: Bearer $TOKEN"      -H "Accept: application/json"      http://localhost:8000/api/courses/12/lessons
 ```
-
 **Response 200**
 ```json
 [
@@ -148,11 +170,11 @@ curl -s   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   
 
 ---
 
-### POST `/api/courses/{course}/lessons`  *(instructor owner)*
+### POST `/api/courses/{course}/lessons`
+Create a lesson (JSON).
 ```bash
-curl -s -X POST   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   -H "Content-Type: application/json"   -d '{"title":"Auth","content":"Tokens and cookies"}'   http://localhost:8000/api/courses/12/lessons
+curl -X POST   -H "Authorization: Bearer $TOKEN"   -H "Accept: application/json"   -H "Content-Type: application/json"   -d '{"title":"Auth","content":"Tokens and cookies"}'   http://localhost:8000/api/courses/12/lessons
 ```
-
 **Response 201**
 ```json
 {"id":110,"course_id":12,"order":3,"title":"Auth","content":"Tokens and cookies"}
@@ -161,13 +183,111 @@ curl -s -X POST   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/
 ---
 
 ### GET `/api/lessons/{lesson}`
+Fetch a single lesson.
 ```bash
-curl -s   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   http://localhost:8000/api/lessons/110
+curl -H "Authorization: Bearer $TOKEN"      -H "Accept: application/json"      http://localhost:8000/api/lessons/110
+```
+**Response 200**
+```json
+{"id":110,"course_id":12,"order":3,"title":"Auth","content":"Tokens and cookies"}
+```
+
+---
+
+### POST `/api/courses/{course}/lessons` (upload attachment)
+Create a lesson **with file** using multipart form-data.
+- `title` (text, required)
+- `content` (text, optional)
+- `attachment` (file, optional)
+
+**Example (curl)**
+```bash
+curl -X POST   -H "Authorization: Bearer $TOKEN"   -H "Accept: application/json"   -F "title=Lesson 1 - Overview"   -F "content=Lesson intro..."   -F "attachment=@/path/to/file.pdf"   http://localhost:8000/api/courses/11/lessons
+```
+**Response 201**
+```json
+{
+  "id": 119,
+  "course_id": 11,
+  "order": 1,
+  "title": "Lesson 1 - Overview",
+  "content": "Lesson intro...",
+  "has_attachment": true,
+  "attachment_url": "http://localhost:8000/api/lessons/119/attachment",
+  "created_at": "2025-11-06T21:35:50.000000Z"
+}
+```
+
+> Notes
+> - If you upload a file, `has_attachment` should be `true` and `attachment_url` will be available for download.
+> - Attachments can later be replaced or removed via `PATCH /api/lessons/{id}` (see below).
+
+---
+
+### PATCH `/api/lessons/{id}` (update + replace/remove attachment)
+Supports updating text fields and managing the attachment.
+- JSON fields: `title`, `content`
+- Multipart fields:
+  - `attachment` (file) → **replaces** existing file
+  - `remove_attachment=1` (text/boolean) → **removes** existing file
+
+**Examples**
+Replace file:
+```bash
+curl -X PATCH   -H "Authorization: Bearer $TOKEN"   -H "Accept: application/json"   -F "attachment=@/path/to/new.pdf"   http://localhost:8000/api/lessons/119
+```
+
+Remove file:
+```bash
+curl -X PATCH   -H "Authorization: Bearer $TOKEN"   -H "Accept: application/json"   -F "remove_attachment=1"   http://localhost:8000/api/lessons/119
 ```
 
 **Response 200**
 ```json
-{"id":110,"course_id":12,"order":3,"title":"Auth","content":"Tokens and cookies"}
+{
+  "id": 119,
+  "course_id": 11,
+  "order": 1,
+  "title": "Lesson 1 - Overview",
+  "content": "Lesson intro.",
+  "has_attachment": false,
+  "attachment_url": null,
+  "created_at": "2025-11-06T21:35:50.000000Z"
+}
+```
+
+---
+
+### GET `/api/lessons/{id}/attachment` (download)
+Downloads the lesson’s attachment (uses content-disposition filename).
+```bash
+curl -L   -H "Authorization: Bearer $TOKEN"   http://localhost:8000/api/lessons/11/attachment -o lesson-11-attachment
+```
+
+---
+
+## Comments (on lessons)
+
+### GET `/api/lessons/{lesson}/comments`
+```bash
+curl -H "Authorization: Bearer $TOKEN"      -H "Accept: application/json"      http://localhost:8000/api/lessons/110/comments
+```
+
+**Response 200**
+```json
+[
+  {"id":1,"user_id":3,"lesson_id":110,"body":"Great!","created_at":"2025-11-05T16:23:10Z"}
+]
+```
+
+### POST `/api/lessons/{lesson}/comments`
+Allowed for **instructor of the course** or **enrolled students**.
+```bash
+curl -X POST   -H "Authorization: Bearer $TOKEN"   -H "Accept: application/json"   -H "Content-Type: application/json"   -d '{"body":"Thanks for the lesson!"}'   http://localhost:8000/api/lessons/110/comments
+```
+**Response 201**
+```json
+{"id":9,"user_id":3,"lesson_id":110,"body":"Thanks for the lesson!","created_at":"2025-11-05T16:40:00Z"}
 ```
 
 ---
@@ -176,11 +296,9 @@ curl -s   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   
 
 ### POST `/api/courses/{course}/enroll`  *(student)*
 Enrolls the authenticated student into a published course (idempotent).
-
 ```bash
-curl -s -X POST   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   http://localhost:8000/api/courses/12/enroll
+curl -X POST   -H "Authorization: Bearer $TOKEN"   -H "Accept: application/json"   http://localhost:8000/api/courses/12/enroll
 ```
-
 **Response 200**
 ```json
 {"status":"ok","message":"Enrolled"}
@@ -188,11 +306,9 @@ curl -s -X POST   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/
 
 ### GET `/api/me/courses`
 Returns courses the current user is enrolled in (and taught, if instructor).
-
 ```bash
-curl -s   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   http://localhost:8000/api/me/courses
+curl -H "Authorization: Bearer $TOKEN"      -H "Accept: application/json"      http://localhost:8000/api/me/courses
 ```
-
 **Response 200**
 ```json
 {
@@ -207,39 +323,11 @@ curl -s   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   
 
 ---
 
-## Comments (on lessons)
-
-### GET `/api/lessons/{lesson}/comments`
-```bash
-curl -s   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   http://localhost:8000/api/lessons/110/comments
-```
-
-**Response 200**
-```json
-[
-  {"id":1,"user_id":3,"lesson_id":110,"body":"Great!","created_at":"2025-11-05T16:23:10Z"}
-]
-```
-
-### POST `/api/lessons/{lesson}/comments`
-Allowed for **instructor of the course** or **enrolled students**.
-
-```bash
-curl -s -X POST   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/json"   -H "Content-Type: application/json"   -d '{"body":"Thanks for the lesson!"}'   http://localhost:8000/api/lessons/110/comments
-```
-
-**Response 201**
-```json
-{"id":9,"user_id":3,"lesson_id":110,"body":"Thanks for the lesson!","created_at":"2025-11-05T16:40:00Z"}
-```
-
----
-
 ## Errors
 
-- **401 Unauthorized** — missing or invalid token.
-- **403 Forbidden** — authenticated but not permitted (e.g., student trying to create a course).
-- **404 Not Found** — resource doesn’t exist or you don’t have access.
+- **401 Unauthorized** — missing or invalid token.  
+- **403 Forbidden** — authenticated but not permitted.  
+- **404 Not Found** — resource doesn’t exist or you don’t have access.  
 - **422 Unprocessable Entity** — validation failed (check `errors` in JSON).
 
 **Example 422**
@@ -257,5 +345,4 @@ curl -s -X POST   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/
 - All write endpoints require auth; course creation/updating/deleting is **instructor-only** (policy).
 - Slugs are generated automatically on create; you may pass one explicitly if needed.
 - Lesson order is maintained per course; UI offers up/down controls on the web side.
-
----
+- When testing with Postman, prefer the collection/environment `token` variable and set `Authorization: Bearer {{token}}` on requests.

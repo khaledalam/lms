@@ -8,7 +8,6 @@ use App\Http\Controllers\LessonController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
-use Laravel\Horizon\Horizon;
 
 Route::get('/', fn() => redirect()->route('courses.index'));
 

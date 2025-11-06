@@ -1,0 +1,1706 @@
+{
+	"info": {
+		"_postman_id": "1a013b4a-407f-4a55-a06e-068ca5f11587",
+		"name": "LMS API",
+		"description": "Laravel LMS API collection (Sanctum authenticated)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1566232"
+	},
+	"item": [
+		{
+			"name": "Auth - Get Sanctum Token (manual)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse JSON response",
+							"const response = pm.response.json();",
+							"",
+							"// Save token to environment variable if present",
+							"if (response.token) {",
+							"",
+							"    pm.environment.set(\"token\", response.token);",
+							"    ",
+							"    pm.collectionVariables.set(\"token\", response.token);",
+							"",
+							"    console.log(\"Token saved to environment variable: auth_token\");",
+							"} else {",
+							"    console.warn(\"⚠️ No token field found in response\");",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    // \"email\": \"student1@example.com\",\n    \"email\": \"instructor1@example.com\",\n    \"password\": \"password\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/auth/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"token"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Auth - Get Sanctum Token (manual)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"student1@example.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/auth/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"auth",
+								"token"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:32:48 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DHC88464622FWPGGSPMJDD"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"token\": \"2|XobEpqlveZF7wiWcp1hrrv1uN8zyvT00QaQOpQaF4cfe2a6b\"\n}"
+				}
+			]
+		},
+		{
+			"name": "GET /api/courses (list)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/courses?published=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"courses"
+					],
+					"query": [
+						{
+							"key": "published",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET /api/courses (list)",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/courses?published=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"courses"
+							],
+							"query": [
+								{
+									"key": "published",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:33:04 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DHCQYQNQCQ4THT12TWAJH6"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"current_page\": 1,\n    \"data\": [\n        {\n            \"id\": 9,\n            \"title\": \"Eligendi est quos totam.\",\n            \"slug\": \"id-illo-consequuntur-at-et\",\n            \"description\": \"Sunt est omnis illo et deleniti dignissimos accusamus. Aperiam mollitia iure illum iusto quidem. Quas fugit modi laborum quos.\",\n            \"published\": 1,\n            \"instructor_id\": 1\n        },\n        {\n            \"id\": 8,\n            \"title\": \"A qui quisquam ipsa.\",\n            \"slug\": \"ducimus-voluptatem-vitae-est\",\n            \"description\": \"Tempore ipsam consequatur nam omnis velit aut voluptates. Vel ex officia aspernatur fuga laboriosam placeat. Ea quas necessitatibus expedita quam.\",\n            \"published\": 1,\n            \"instructor_id\": 2\n        },\n        {\n            \"id\": 7,\n            \"title\": \"In debitis molestiae voluptate.\",\n            \"slug\": \"incidunt-numquam-hic-et-magni\",\n            \"description\": \"Velit perspiciatis minima sequi ducimus. Laboriosam repudiandae rerum in exercitationem officia qui maiores. Harum quia veniam et quasi.\",\n            \"published\": 1,\n            \"instructor_id\": 2\n        },\n        {\n            \"id\": 6,\n            \"title\": \"Tempore harum quia perferendis.\",\n            \"slug\": \"officiis-expedita-recusandae-provident\",\n            \"description\": \"Omnis expedita ea est saepe quia. Rerum ea accusamus necessitatibus eius voluptates sunt quisquam. Voluptatibus explicabo ad natus culpa ipsum impedit. Unde explicabo et facere tenetur voluptates non mollitia.\",\n            \"published\": 1,\n            \"instructor_id\": 1\n        },\n        {\n            \"id\": 5,\n            \"title\": \"Eveniet iusto minima.\",\n            \"slug\": \"soluta-quis-possimus\",\n            \"description\": \"Ullam facilis voluptatem ea libero ut velit nihil. Dolorem quis quibusdam ut voluptatem. Qui voluptas praesentium hic laboriosam sed commodi culpa.\",\n            \"published\": 1,\n            \"instructor_id\": 2\n        },\n        {\n            \"id\": 3,\n            \"title\": \"Praesentium eos.\",\n            \"slug\": \"est-quos-nihil-officiis\",\n            \"description\": \"Et et qui molestiae excepturi ut quibusdam laudantium. Ullam possimus tempora sint repellendus dolor eos. Enim iure necessitatibus sit magni nulla cum incidunt.\",\n            \"published\": 1,\n            \"instructor_id\": 1\n        },\n        {\n            \"id\": 1,\n            \"title\": \"Voluptatem est voluptatibus.\",\n            \"slug\": \"illum-et-magnam-aut\",\n            \"description\": \"Dignissimos minus asperiores accusamus officiis. Quaerat sit itaque quia consequatur reiciendis deserunt error. Aut nobis quis possimus autem corporis quas. Consequuntur qui repellat dolor.\",\n            \"published\": 1,\n            \"instructor_id\": 2\n        }\n    ],\n    \"first_page_url\": \"http://localhost:8000/api/courses?page=1\",\n    \"from\": 1,\n    \"last_page\": 1,\n    \"last_page_url\": \"http://localhost:8000/api/courses?page=1\",\n    \"links\": [\n        {\n            \"url\": null,\n            \"label\": \"&laquo; Previous\",\n            \"page\": null,\n            \"active\": false\n        },\n        {\n            \"url\": \"http://localhost:8000/api/courses?page=1\",\n            \"label\": \"1\",\n            \"page\": 1,\n            \"active\": true\n        },\n        {\n            \"url\": null,\n            \"label\": \"Next &raquo;\",\n            \"page\": null,\n            \"active\": false\n        }\n    ],\n    \"next_page_url\": null,\n    \"path\": \"http://localhost:8000/api/courses\",\n    \"per_page\": 15,\n    \"prev_page_url\": null,\n    \"to\": 7,\n    \"total\": 7\n}"
+				}
+			]
+		},
+		{
+			"name": "POST /api/courses (create)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Intro to Laravel\",\n  \"description\": \"Learn basic Laravel structure\",\n  \"published\": true\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/courses",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"courses"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "POST /api/courses (create)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Intro to Laravel\",\n  \"description\": \"Learn basic Laravel structure\",\n  \"published\": true\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/courses",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"courses"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:34:32 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DHFDJEMQX29AHWWCHK0GTQ"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 11,\n    \"title\": \"Intro to Laravel\",\n    \"slug\": \"intro-to-laravel\",\n    \"description\": \"Learn basic Laravel structure\",\n    \"published\": true,\n    \"instructor_id\": 1\n}"
+				}
+			]
+		},
+		{
+			"name": "GET /api/courses/:id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/courses/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"courses",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET /api/courses/:id",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/courses/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"courses",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:33:26 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DHDD60XP2RF4GMH9MRQE0G"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"title\": \"Voluptatem est voluptatibus.\",\n    \"slug\": \"illum-et-magnam-aut\",\n    \"description\": \"Dignissimos minus asperiores accusamus officiis. Quaerat sit itaque quia consequatur reiciendis deserunt error. Aut nobis quis possimus autem corporis quas. Consequuntur qui repellat dolor.\",\n    \"published\": 1,\n    \"instructor_id\": 2\n}"
+				}
+			]
+		},
+		{
+			"name": "PATCH /api/courses/:id",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Updated Title\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/courses/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"courses",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "PATCH /api/courses/:id",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Title\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/courses/11",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"courses",
+								"11"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:35:00 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DHG9VE896Z9XVQBB837PD3"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 11,\n    \"title\": \"Updated Title\",\n    \"slug\": \"updated-title\",\n    \"description\": \"Learn basic Laravel structure\",\n    \"published\": 1,\n    \"instructor_id\": 1\n}"
+				}
+			]
+		},
+		{
+			"name": "DELETE /api/courses/:id",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/courses/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"courses",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/courses/:id/lessons (sorted)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/courses/1/lessons?sort=attachment&direction=desc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"courses",
+						"1",
+						"lessons"
+					],
+					"query": [
+						{
+							"key": "sort",
+							"value": "attachment"
+						},
+						{
+							"key": "direction",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET /api/courses/:id/lessons (sorted)",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/courses/1/lessons?sort=attachment&direction=desc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"courses",
+								"1",
+								"lessons"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "attachment"
+								},
+								{
+									"key": "direction",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:35:14 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DHGQDRF335SD4SF4N4ZKTP"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": 1,\n        \"course_id\": 1,\n        \"order\": 1,\n        \"title\": \"Qui deleniti qui quas vel soluta.\",\n        \"content\": \"Aut tempora et illo exercitationem. Accusantium et nisi adipisci mollitia. Et ut consequatur blanditiis nihil. Voluptates optio dicta ea reprehenderit rerum corrupti. Qui suscipit veritatis debitis ut.\\n\\nAliquid et consequatur sapiente repudiandae voluptatem. Fugiat sint corrupti quos quia velit nobis accusamus voluptas.\\n\\nEa qui voluptatem iste aut molestias. Minima repellendus repellendus ut.\",\n        \"has_attachment\": false,\n        \"attachment_url\": null,\n        \"created_at\": \"2025-11-06T21:32:12.000000Z\"\n    },\n    {\n        \"id\": 2,\n        \"course_id\": 1,\n        \"order\": 2,\n        \"title\": \"Et vel sed explicabo.\",\n        \"content\": \"Adipisci sunt sit aut et libero et. Architecto rerum nulla ut voluptatem consequuntur mollitia sint qui. Autem laborum nostrum dolores. Error amet commodi sint hic ut.\\n\\nError enim repudiandae corrupti animi dolorem ducimus vel. Ab quam placeat qui. Sed nulla sed similique voluptates qui.\\n\\nPossimus omnis eum vel est. Eos enim est iure incidunt. Accusantium recusandae aut ex est aliquid inventore. Doloribus qui harum voluptatibus.\",\n        \"has_attachment\": false,\n        \"attachment_url\": null,\n        \"created_at\": \"2025-11-06T21:32:12.000000Z\"\n    },\n    {\n        \"id\": 3,\n        \"course_id\": 1,\n        \"order\": 3,\n        \"title\": \"Maiores beatae aut impedit.\",\n        \"content\": \"Debitis eligendi delectus quisquam possimus itaque voluptatibus. Omnis itaque eum ut velit non ducimus et. Nostrum molestiae fugit consequuntur perspiciatis quaerat accusamus similique. Nam corrupti fugit vero consequatur.\\n\\nVoluptatem alias et quasi quia error qui veniam. Alias et ullam culpa aliquam quisquam quo vero. Suscipit recusandae beatae a quae blanditiis sed. Quia totam eos accusamus cupiditate officia id non.\\n\\nAtque eos perferendis veniam eos voluptas eveniet. Est sapiente sint vitae ut incidunt. Sint animi iusto et id. Et aspernatur et velit fuga.\",\n        \"has_attachment\": false,\n        \"attachment_url\": null,\n        \"created_at\": \"2025-11-06T21:32:12.000000Z\"\n    },\n    {\n        \"id\": 4,\n        \"course_id\": 1,\n        \"order\": 4,\n        \"title\": \"Autem quo eum.\",\n        \"content\": \"Explicabo voluptate modi rerum consequatur dignissimos. Provident quia et et vel adipisci excepturi perferendis dolores. Error hic earum ut architecto sed saepe rerum. Perferendis a nam fugit assumenda ut voluptatum.\\n\\nIure architecto provident odit molestias at ullam et. Id aut ut qui sed hic. Fugit dolores occaecati ut dolor qui. Recusandae voluptatem voluptas pariatur aspernatur aut neque aut.\\n\\nLaboriosam laudantium natus quia. Asperiores aut aut laborum. Cum officiis sed tempora nihil corrupti.\",\n        \"has_attachment\": false,\n        \"attachment_url\": null,\n        \"created_at\": \"2025-11-06T21:32:12.000000Z\"\n    },\n    {\n        \"id\": 5,\n        \"course_id\": 1,\n        \"order\": 5,\n        \"title\": \"Ipsam totam occaecati nesciunt tenetur.\",\n        \"content\": \"At cumque et odit molestiae. Deserunt non et sapiente et odit omnis.\\n\\nError dignissimos dolore incidunt beatae. Quia harum soluta quia porro quis et sequi sed. Quaerat soluta est exercitationem pariatur.\\n\\nEx consequuntur facere praesentium recusandae id dolorem et. Corporis ut vitae exercitationem minus voluptas. Et dolor ab quod necessitatibus. Nam molestias dolorum temporibus et repellendus vel numquam.\",\n        \"has_attachment\": false,\n        \"attachment_url\": null,\n        \"created_at\": \"2025-11-06T21:32:12.000000Z\"\n    },\n    {\n        \"id\": 6,\n        \"course_id\": 1,\n        \"order\": 6,\n        \"title\": \"Aut ratione voluptatem.\",\n        \"content\": \"Quidem excepturi odio minima harum error. Necessitatibus repellat earum est molestiae.\\n\\nAut sed aut eligendi atque. Molestiae fugiat amet ea et et modi modi. Aut voluptatem quasi blanditiis animi velit.\\n\\nQui iste quibusdam eius qui. Possimus officiis perspiciatis neque alias.\",\n        \"has_attachment\": false,\n        \"attachment_url\": null,\n        \"created_at\": \"2025-11-06T21:32:12.000000Z\"\n    },\n    {\n        \"id\": 8,\n        \"course_id\": 1,\n        \"order\": 8,\n        \"title\": \"Odit et reiciendis consequatur.\",\n        \"content\": \"Molestias officia veritatis quia molestias. Provident aut accusantium voluptatem dolor. Et et enim quis libero.\\n\\nQuo dolorem autem quibusdam ut facilis. Eligendi ea veniam deserunt esse ut totam praesentium nihil. Pariatur vero est numquam voluptatum sed aut molestiae.\\n\\nEt non excepturi ab quia voluptatem sed rerum. Harum animi rerum a consectetur et ut est. Est asperiores aut dignissimos voluptate dolore totam.\",\n        \"has_attachment\": false,\n        \"attachment_url\": null,\n        \"created_at\": \"2025-11-06T21:32:12.000000Z\"\n    },\n    {\n        \"id\": 9,\n        \"course_id\": 1,\n        \"order\": 9,\n        \"title\": \"Veritatis esse est laudantium rerum.\",\n        \"content\": \"Quia maxime ipsa voluptatum. Dolor corporis sed sunt ad est vitae. Iure explicabo exercitationem fugit eum. Vero eum similique eos sed omnis consequatur.\\n\\nRepudiandae sint quia id id aut. Quo et cum ea quisquam non ad sunt recusandae. Nesciunt vel et facilis totam ut. Ut dignissimos similique provident est.\\n\\nFugit ad qui ullam quam. Itaque error aliquid repudiandae aliquam eius totam voluptate. Incidunt ea animi et tempore deleniti. Est quas cupiditate facere molestiae. Soluta iste debitis labore dignissimos.\",\n        \"has_attachment\": false,\n        \"attachment_url\": null,\n        \"created_at\": \"2025-11-06T21:32:12.000000Z\"\n    },\n    {\n        \"id\": 10,\n        \"course_id\": 1,\n        \"order\": 10,\n        \"title\": \"Optio quis maxime.\",\n        \"content\": \"Numquam aliquam esse quia non voluptates facilis necessitatibus. Ut eum eius ducimus placeat. Dolorem perspiciatis iure nulla facilis animi quidem. Quia aut commodi eaque qui.\\n\\nExpedita ipsam voluptatem odit et voluptatibus iste voluptatem. Nostrum fugiat consectetur voluptates et et omnis. Veniam tempore nostrum pariatur et iste.\\n\\nAut quia fugiat consectetur praesentium ullam. Architecto explicabo rerum odio rerum cupiditate corrupti recusandae eius. Ipsa sed debitis nisi numquam vero id ut. Ut enim voluptatem qui et est sed. Quisquam totam fugiat qui cupiditate.\",\n        \"has_attachment\": false,\n        \"attachment_url\": null,\n        \"created_at\": \"2025-11-06T21:32:12.000000Z\"\n    },\n    {\n        \"id\": 12,\n        \"course_id\": 1,\n        \"order\": 12,\n        \"title\": \"Et quod qui voluptatem.\",\n        \"content\": \"Eaque fugiat alias assumenda. Quasi dolor et architecto impedit dignissimos. Sed culpa magni facere eos et. Voluptatem et quo dolorum aliquam quibusdam reprehenderit aut voluptatibus.\\n\\nInventore reiciendis et temporibus mollitia dolores vitae est. Corrupti quas reprehenderit beatae dolorum ea dicta. Temporibus repellat voluptate praesentium ab. Odio dolor assumenda distinctio fugiat aut dolorem.\\n\\nExercitationem sint saepe distinctio et. Non molestiae sit minima architecto porro unde. Maxime velit omnis dolore minus odit.\",\n        \"has_attachment\": false,\n        \"attachment_url\": null,\n        \"created_at\": \"2025-11-06T21:32:12.000000Z\"\n    },\n    {\n        \"id\": 7,\n        \"course_id\": 1,\n        \"order\": 7,\n        \"title\": \"Nulla soluta fuga fugiat.\",\n        \"content\": \"Est placeat repellat laboriosam eum. Harum debitis sapiente a omnis pariatur dolor vero. Reiciendis pariatur quo voluptas quisquam sunt deleniti in. Consequuntur molestiae rerum aliquid alias aspernatur.\\n\\nQuia voluptates sit a dignissimos. Dolorem repellendus doloribus sunt voluptas veritatis aut eum. Dolor cum officia similique tenetur dolorum porro quidem. Itaque velit et aut quis est quasi.\\n\\nPlaceat qui enim amet at et sunt. Quibusdam eum mollitia porro totam qui consequuntur ratione. Explicabo maxime laborum cumque magnam pariatur veritatis accusamus. Excepturi distinctio ut quibusdam qui.\",\n        \"has_attachment\": true,\n        \"attachment_url\": \"http://localhost:8000/api/lessons/7/attachment\",\n        \"created_at\": \"2025-11-06T21:32:12.000000Z\"\n    },\n    {\n        \"id\": 11,\n        \"course_id\": 1,\n        \"order\": 11,\n        \"title\": \"Soluta explicabo sed praesentium et.\",\n        \"content\": \"Reiciendis adipisci quisquam laboriosam voluptas quo voluptate. Aut omnis excepturi voluptatem quia quis ex.\\n\\nDignissimos repellendus autem voluptas impedit nulla ullam nesciunt. Voluptas est fugiat ipsum maiores. Est qui necessitatibus eum aut.\\n\\nQuos et voluptas dolore dolores dolore minus. Officia cum similique molestias blanditiis placeat. Quo rerum et consequatur eius. Nesciunt at voluptatem et ipsum.\",\n        \"has_attachment\": true,\n        \"attachment_url\": \"http://localhost:8000/api/lessons/11/attachment\",\n        \"created_at\": \"2025-11-06T21:32:12.000000Z\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "POST /api/courses/:id/lessons (upload)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Lesson 1 - Overview",
+							"type": "text"
+						},
+						{
+							"key": "content",
+							"value": "Lesson intro...",
+							"type": "text"
+						},
+						{
+							"key": "attachment",
+							"type": "file",
+							"src": "/Users/khaledalam/Desktop/lms/docs/testing.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/courses/11/lessons",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"courses",
+						"11",
+						"lessons"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "POST /api/courses/:id/lessons (upload)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Lesson 1 - Overview",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "Lesson intro...",
+									"type": "text"
+								},
+								{
+									"key": "attachment",
+									"type": "file",
+									"src": "/Users/khaledalam/Desktop/lms/docs/testing.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/courses/11/lessons",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"courses",
+								"11",
+								"lessons"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:44:20 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DJ1BY5TPA2FCXNWA9XTYEX"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 122,\n    \"course_id\": 11,\n    \"order\": 4,\n    \"title\": \"Lesson 1 - Overview\",\n    \"content\": \"Lesson intro...\",\n    \"has_attachment\": true,\n    \"attachment_url\": \"http://localhost:8000/api/lessons/122/attachment\",\n    \"created_at\": \"2025-11-06T21:44:20.000000Z\"\n}"
+				}
+			]
+		},
+		{
+			"name": "GET /api/lessons/:id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/lessons/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"lessons",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET /api/lessons/:id",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/lessons/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"lessons",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:36:05 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DHJ8FFM4M5AA1JSWY1VY27"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"course_id\": 1,\n    \"order\": 1,\n    \"title\": \"Qui deleniti qui quas vel soluta.\",\n    \"content\": \"Aut tempora et illo exercitationem. Accusantium et nisi adipisci mollitia. Et ut consequatur blanditiis nihil. Voluptates optio dicta ea reprehenderit rerum corrupti. Qui suscipit veritatis debitis ut.\\n\\nAliquid et consequatur sapiente repudiandae voluptatem. Fugiat sint corrupti quos quia velit nobis accusamus voluptas.\\n\\nEa qui voluptatem iste aut molestias. Minima repellendus repellendus ut.\",\n    \"has_attachment\": false,\n    \"attachment_url\": null,\n    \"created_at\": \"2025-11-06T21:32:12.000000Z\"\n}"
+				}
+			]
+		},
+		{
+			"name": "PATCH /api/lessons/:id",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Updated Lesson",
+							"type": "text"
+						},
+						{
+							"key": "remove_attachment",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/lessons/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"lessons",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "PATCH /api/lessons/:id",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Updated Lesson",
+									"type": "text"
+								},
+								{
+									"key": "remove_attachment",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/lessons/119",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"lessons",
+								"119"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:36:38 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DHK8Q9RKFPVV2MZRGBVT82"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 119,\n    \"course_id\": 11,\n    \"order\": 1,\n    \"title\": \"Lesson 1 - Overview\",\n    \"content\": \"Lesson intro...\",\n    \"has_attachment\": false,\n    \"attachment_url\": null,\n    \"created_at\": \"2025-11-06T21:35:50.000000Z\"\n}"
+				}
+			]
+		},
+		{
+			"name": "GET /api/lessons/:id/attachment (download)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/lessons/11/attachment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"lessons",
+						"11",
+						"attachment"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET /api/lessons/:id/attachment (download)",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/lessons/11/attachment",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"lessons",
+								"11",
+								"attachment"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "text/plain; charset=UTF-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "27"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Content-Disposition",
+							"value": "attachment; filename=soluta-explicabo-sed-praesentium-et.txt"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:44:46 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DJ264FJ34VP1GR1BKGMB26"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "This is another attachment\n"
+				}
+			]
+		},
+		{
+			"name": "DELETE /api/lessons/:id",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/lessons/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"lessons",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "DELETE /api/lessons/:id",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/lessons/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"lessons",
+								"1"
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:02:18 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DFMDVNHARXF679Y0QMY4JY"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "POST /api/courses/:id/enroll",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/courses/1/enroll",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"courses",
+						"1",
+						"enroll"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "POST /api/courses/:id/enroll",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/courses/1/enroll",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"courses",
+								"1",
+								"enroll"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:28:21 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DH43K8MPA0F882N90T72Q7"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"You are already enrolled in this course.\"\n}"
+				}
+			]
+		},
+		{
+			"name": "GET /api/me/courses",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/me/courses",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"me",
+						"courses"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET /api/me/courses",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/me/courses",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"me",
+								"courses"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:45:04 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DJ2PXVCS2CBSJXXM1M5ZYY"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"enrolled\": [],\n    \"instructed\": [\n        {\n            \"id\": 3,\n            \"title\": \"Praesentium eos.\",\n            \"slug\": \"est-quos-nihil-officiis\",\n            \"published\": 1\n        },\n        {\n            \"id\": 6,\n            \"title\": \"Tempore harum quia perferendis.\",\n            \"slug\": \"officiis-expedita-recusandae-provident\",\n            \"published\": 1\n        },\n        {\n            \"id\": 9,\n            \"title\": \"Eligendi est quos totam.\",\n            \"slug\": \"id-illo-consequuntur-at-et\",\n            \"published\": 1\n        },\n        {\n            \"id\": 10,\n            \"title\": \"Est rem qui.\",\n            \"slug\": \"ipsa-molestiae-consequatur-eos\",\n            \"published\": 0\n        },\n        {\n            \"id\": 11,\n            \"title\": \"Updated Title\",\n            \"slug\": \"updated-title\",\n            \"published\": 1\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "GET /api/lessons/:id/comments",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/lessons/119/comments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"lessons",
+						"119",
+						"comments"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET /api/lessons/:id/comments",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/lessons/119/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"lessons",
+								"119",
+								"comments"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:45:24 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DJ3AXCFQ79CYBHN4Y55YRC"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"current_page\": 1,\n    \"data\": [],\n    \"first_page_url\": \"http://localhost:8000/api/lessons/119/comments?page=1\",\n    \"from\": null,\n    \"last_page\": 1,\n    \"last_page_url\": \"http://localhost:8000/api/lessons/119/comments?page=1\",\n    \"links\": [\n        {\n            \"url\": null,\n            \"label\": \"&laquo; Previous\",\n            \"page\": null,\n            \"active\": false\n        },\n        {\n            \"url\": \"http://localhost:8000/api/lessons/119/comments?page=1\",\n            \"label\": \"1\",\n            \"page\": 1,\n            \"active\": true\n        },\n        {\n            \"url\": null,\n            \"label\": \"Next &raquo;\",\n            \"page\": null,\n            \"active\": false\n        }\n    ],\n    \"next_page_url\": null,\n    \"path\": \"http://localhost:8000/api/lessons/119/comments\",\n    \"per_page\": 20,\n    \"prev_page_url\": null,\n    \"to\": null,\n    \"total\": 0\n}"
+				}
+			]
+		},
+		{
+			"name": "POST /api/lessons/:id/comments",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"body\": \"Great lesson!\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/lessons/119/comments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"lessons",
+						"119",
+						"comments"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "POST /api/lessons/:id/comments",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"body\": \"Great lesson!\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/lessons/119/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"lessons",
+								"119",
+								"comments"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.27.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.3.27"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 06 Nov 2025 21:45:34 GMT"
+						},
+						{
+							"key": "phpdebugbar-id",
+							"value": "01K9DJ3MDZ69PMM7DZG9E7WDPA"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 322,\n    \"lesson_id\": 119,\n    \"user\": {\n        \"id\": 1,\n        \"name\": \"Instructor One\"\n    },\n    \"body\": \"Great lesson!\",\n    \"created_at\": \"2025-11-06T21:45:34.000000Z\"\n}"
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "PASTE_YOUR_TOKEN_HERE"
+		}
+	]
+}

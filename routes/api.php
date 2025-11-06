@@ -21,9 +21,14 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
         return $request->user();
     });
 
+    Route::get('me/courses', [EnrollmentApiController::class, 'index']);
+
+
     Route::apiResource('courses', CourseApiController::class);
     Route::apiResource('courses.lessons', LessonApiController::class)->shallow();
     Route::post('courses/{course}/enroll', [EnrollmentApiController::class, 'store']);
-    Route::get('me/courses', [EnrollmentApiController::class, 'index']);
+
     Route::apiResource('lessons.comments', CommentApiController::class)->only(['index', 'store'])->shallow();
+    Route::get('lessons/{lesson}/attachment', [LessonApiController::class, 'attachment'])->name('lessons.attachment');
+    Route::get('lessons/{lesson:id}/comments', [CommentApiController::class, 'index']);
 });
