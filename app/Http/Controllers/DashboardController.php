@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\UserRoles;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Comment;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
@@ -16,127 +15,139 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        $from = \Illuminate\Support\Carbon::now()->subDays(13)->startOfDay();
-        $to   = \Illuminate\Support\Carbon::now()->endOfDay();
+        // Common time axis for charts (last 14 days)
+        $from = now()->subDays(13)->startOfDay();
+        $to   = now()->endOfDay();
         $days = collect(range(0, 13))->map(fn($i) => $from->copy()->addDays($i)->toDateString());
 
+        // ---------------- System-wide cards (always available) ----------------
+        // If your DB grows, consider Cache::remember('all_overview', 60, fn () => [...])
+        $allCards = [
+            'Courses'              => Course::count(),
+            'Published'            => Course::where('published', true)->count(),
+            'Drafts'               => Course::where('published', false)->count(),
+            'Unique Students'      => DB::table('course_user')->distinct('user_id')->count('user_id'),
+            'Lessons'              => Lesson::count(),
+            'Comments'             => Comment::count(),
+            'With Attachments'     => Lesson::whereNotNull('attachment_path')->count(),
+            'Without Attachments'  => Lesson::whereNull('attachment_path')->count(),
+        ];
 
-        if ($user->isInstructor()) {
-            // Instructor stats
-            $courses = Course::where('instructor_id', $user->id)
-                ->withCount(['students', 'lessons'])
-                ->get();
+        // ---------------- Instructor dashboard ----------------
+        if (method_exists($user, 'isInstructor') ? $user->isInstructor() : ($user->role ?? null) === 'instructor') {
+            // Reuse instructor course ids across queries
+            $courseIds = Course::where('instructor_id', $user->id)->pluck('id');
 
-            $publishedCount = (clone $courses)->where('published', true)->count();
-            $draftCount     = (clone $courses)->where('published', false)->count();
+            $totalCourses   = $courseIds->count();
+            $publishedCount = $totalCourses
+                ? Course::whereIn('id', $courseIds)->where('published', true)->count()
+                : 0;
+            $draftCount     = $totalCourses - $publishedCount;
+            $totalLessons   = $totalCourses
+                ? Lesson::whereIn('course_id', $courseIds)->count()
+                : 0;
 
-            $totalStudents  = $courses->sum('students_count');
-            $totalLessons   = $courses->sum('lessons_count');
+            // Unique students across ALL of the instructor’s courses
+            $uniqueStudentsCount = $totalCourses
+                ? DB::table('course_user')->whereIn('course_id', $courseIds)->distinct('user_id')->count('user_id')
+                : 0;
 
-            // Students per course (top 8)
-            $topCourses = $courses->sortByDesc('students_count')->take(8);
-            $studentsPerCourseLabels = $topCourses->pluck('title')->values();
-            $studentsPerCourseData   = $topCourses->pluck('students_count')->values();
+            // Chart: students per course (top 8)
+            $topCourses = $totalCourses
+                ? Course::whereIn('id', $courseIds)
+                ->withCount('students')
+                ->orderByDesc('students_count')
+                ->take(8)
+                ->get(['id', 'title'])
+                : collect();
 
-            // Comments per day (last 14 days)
-            $comments = \App\Models\Comment::whereHas('lesson.course', fn($q) => $q->where('instructor_id', $user->id))
-                ->whereBetween('created_at', [$from, $to])
-                ->get()
-                ->groupBy(fn($c) => $c->created_at->toDateString());
-
-            $commentsPerDay = $days->map(
-                fn($d) => $comments->get($d, collect())->count()
-            )->values();
-
-            $all_courses      = Course::count();
-            $all_published    = Course::where('published', true)->count();
-            $all_drafts       = Course::where('published', false)->count();
-            $all_students     = DB::table('course_user')->distinct('user_id')->count('user_id');
-            $all_lessons      = Lesson::count();
-            $all_comments     = Comment::count();
-            $all_attach_with  = Lesson::whereNotNull('attachment_path')->count();
-            $all_attach_without = Lesson::whereNull('attachment_path')->count();
-
-            $all_cards = [
-                'Courses'              => $all_courses,
-                'Published'            => $all_published,
-                'Drafts'               => $all_drafts,
-                'Unique Students'      => $all_students,
-                'Lessons'              => $all_lessons,
-                'Comments'             => $all_comments,
-                'With Attachments'     => $all_attach_with,
-                'Without Attachments'  => $all_attach_without,
+            $chartStudentsPerCourse = [
+                'labels' => $topCourses->pluck('title')->values(),
+                'data'   => $topCourses->pluck('students_count')->values(),
             ];
 
+            // Chart: comments per day (last 14 days) on instructor’s courses
+            $commentsGrouped = $totalCourses
+                ? Comment::whereHas('lesson', fn($q) => $q->whereIn('course_id', $courseIds))
+                ->whereBetween('created_at', [$from, $to])
+                ->get()
+                ->groupBy(fn($c) => $c->created_at->toDateString())
+                : collect();
+
+            $chartCommentsPerDay = [
+                'labels' => $days,
+                'data'   => $days->map(fn($d) => $commentsGrouped->get($d, collect())->count())->values(),
+            ];
+
+            // List: enrolled students under this instructor (top by #courses with you)
+            $enrolledStudents = $totalCourses
+                ? User::query()
+                ->select('users.id', 'users.name', 'users.email', DB::raw('COUNT(course_user.course_id) as courses_count'))
+                ->join('course_user', 'course_user.user_id', '=', 'users.id')
+                ->whereIn('course_user.course_id', $courseIds)
+                ->groupBy('users.id', 'users.name', 'users.email')
+                ->orderByDesc('courses_count')
+                ->limit(12)
+                ->get()
+                : collect();
+
             return view('dashboard', [
-                'cards' => [
-                    'courses'   => $courses->count(),
+                'role'   => 'instructor',
+                // Personal Insights
+                'cards'  => [
+                    'courses'   => $totalCourses,
                     'published' => $publishedCount,
                     'drafts'    => $draftCount,
-                    'students'  => $totalStudents,
+                    'students'  => $uniqueStudentsCount, // unique people in your courses
                     'lessons'   => $totalLessons,
                 ],
-                'allCards' => $all_cards,
-                'role' => UserRoles::INSTRUCTOR,
-                'chart_students_per_course' => [
-                    'labels' => $studentsPerCourseLabels,
-                    'data'   => $studentsPerCourseData,
-                ],
-                'chart_comments_per_day' => [
-                    'labels' => $days,
-                    'data'   => $commentsPerDay,
-                ],
+                'enrolledStudents'          => $enrolledStudents,
+                // Platform Summary (always present)
+                'allCards'                  => $allCards,
+                // Charts
+                'chart_students_per_course' => $chartStudentsPerCourse,
+                'chart_comments_per_day'    => $chartCommentsPerDay,
             ]);
         }
 
-        // Student stats
+        // ---------------- Student dashboard ----------------
         $enrolledCourses = $user->coursesEnrolled()
             ->withCount(['lessons', 'students'])
             ->get();
 
-        $enrolledCount  = $enrolledCourses->count();
-        $totalELessons  = $enrolledCourses->sum('lessons_count');
+        $enrolledCount = $enrolledCourses->count();
+        $totalELessons = $enrolledCourses->sum('lessons_count');
 
-        // Lessons per enrolled course (top 8)
+        // Chart: lessons per enrolled course (top 8)
         $topEnrolled = $enrolledCourses->sortByDesc('lessons_count')->take(8);
-        $lessonsPerCourseLabels = $topEnrolled->pluck('title')->values();
-        $lessonsPerCourseData   = $topEnrolled->pluck('lessons_count')->values();
+        $chartLessonsPerCourse = [
+            'labels' => $topEnrolled->pluck('title')->values(),
+            'data'   => $topEnrolled->pluck('lessons_count')->values(),
+        ];
 
-        // Attachments vs no-attachments across enrolled lessons (quick feel)
-        $enrolledCourseIds = $enrolledCourses->pluck('id');
-        $attachmentsAgg = Lesson::whereIn('course_id', $enrolledCourseIds)->selectRaw("
-                SUM(CASE WHEN attachment_path IS NULL THEN 1 ELSE 0 END) as no_attachment,
-                SUM(CASE WHEN attachment_path IS NOT NULL THEN 1 ELSE 0 END) as with_attachment
-            ")->first();
-        $attachWith  = (int) ($attachmentsAgg->with_attachment ?? 0);
-        $attachWithout = (int) ($attachmentsAgg->no_attachment ?? 0);
-
-        // My comments per day (last 14 days)
-        $myComments = \App\Models\Comment::where('user_id', $user->id)
+        // Chart: my comments per day (last 14 days)
+        $myCommentsGrouped = Comment::where('user_id', $user->id)
             ->whereBetween('created_at', [$from, $to])
             ->get()
             ->groupBy(fn($c) => $c->created_at->toDateString());
 
-        $myCommentsPerDay = $days->map(
-            fn($d) => $myComments->get($d, collect())->count()
-        )->values();
+        $chartMyCommentsPerDay = [
+            'labels' => $days,
+            'data'   => $days->map(fn($d) => $myCommentsGrouped->get($d, collect())->count())->values(),
+        ];
 
         return view('dashboard', [
-            'role' => 'student',
+            'role'  => 'student',
+            // Personal Insights
             'cards' => [
-                'enrolled' => $enrolledCount,
-                'lessons'  => $totalELessons,
-                'attachments_with' => $attachWith,
-                'attachments_without' => $attachWithout,
+                'enrolled'            => $enrolledCount,
+                'lessons'             => $totalELessons,
             ],
-            'chart_lessons_per_course' => [
-                'labels' => $lessonsPerCourseLabels,
-                'data'   => $lessonsPerCourseData,
-            ],
-            'chart_my_comments_per_day' => [
-                'labels' => $days,
-                'data'   => $myCommentsPerDay,
-            ],
+            // Platform Summary (present for students too → fixes Undefined variable $allCards)
+            'allCards' => $allCards,
+            // Charts
+            'chart_lessons_per_course' => $chartLessonsPerCourse,
+            'chart_my_comments_per_day' => $chartMyCommentsPerDay,
         ]);
     }
 }
