@@ -9,8 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 use App\Notifications\EnrollmentConfirmed;
-use Illuminate\Notifications\Notification;
-
+use Illuminate\Support\Facades\Notification;
 
 class EnrollmentTest extends TestCase
 {
@@ -51,16 +50,23 @@ class EnrollmentTest extends TestCase
     // Enrollment email is sent & queued
     public function test_enrollment_sends_notification(): void
     {
-        dump(config('database.connections.sqlite.database'));
-
         Notification::fake();
 
-        /** @var User $student */
-        $student = User::factory()->create(['role' => UserRoles::STUDENT]);
-        $course  = Course::factory()->create();
+        // Force jobs to run immediately for this test
+        config(['queue.default' => 'sync']);
+
+        $student    = User::factory()->create(['role' => 'student']);
+        $instructor = User::factory()->create(['role' => 'instructor']);
+
+        $course = Course::factory()->state([
+            'instructor_id' => $instructor->id,
+            'published'     => true,
+        ])->create();
+
+        $this->withoutExceptionHandling();
 
         $this->actingAs($student)->post(route('courses.enroll', $course))->assertRedirect();
 
-        Notification::assertSentTo($student, EnrollmentConfirmed::class);
+        Notification::assertSentTo($student, \App\Notifications\EnrollmentConfirmed::class);
     }
 }
