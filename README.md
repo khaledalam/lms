@@ -2,6 +2,12 @@
 
 A mini learning management system built with **Laravel 12**, featuring lessons, comments, file attachments, instructor/student roles, email notitfications, analytics dashboards, and API endpoints — fully containerized using **Docker** with SQLite for simplicity.
 
+## Demo Video
+
+<video src="docs/lms-demo.mp4" controls width="700">
+  Your browser does not support the video tag.
+</video>
+
 ---
 
 ## Features
@@ -49,6 +55,14 @@ This will:
 5. Build frontend assets (if Node container exists).
 
 After setup, visit → [http://localhost:8000](http://localhost:8000)
+
+
+---
+
+## API Documentation
+
+For detailed API endpoints and usage examples, see the [API Docs](docs/api.md).
+
 
 ---
 

@@ -259,8 +259,3 @@ curl -s -X POST   -H "Authorization: Bearer PASTE_ME"   -H "Accept: application/
 - Lesson order is maintained per course; UI offers up/down controls on the web side.
 
 ---
-
-Commit message:
-```
-docs: add API documentation
-```
