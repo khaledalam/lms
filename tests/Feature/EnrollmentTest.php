@@ -8,6 +8,9 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
+use App\Notifications\EnrollmentConfirmed;
+use Illuminate\Notifications\Notification;
+
 
 class EnrollmentTest extends TestCase
 {
@@ -43,5 +46,21 @@ class EnrollmentTest extends TestCase
         // Ensure course is in 'enrolled' list
         $ids = collect($json['enrolled'])->pluck('id')->all();
         $this->assertContains($course->id, $ids);
+    }
+
+    // Enrollment email is sent & queued
+    public function test_enrollment_sends_notification(): void
+    {
+        dump(config('database.connections.sqlite.database'));
+
+        Notification::fake();
+
+        /** @var User $student */
+        $student = User::factory()->create(['role' => UserRoles::STUDENT]);
+        $course  = Course::factory()->create();
+
+        $this->actingAs($student)->post(route('courses.enroll', $course))->assertRedirect();
+
+        Notification::assertSentTo($student, EnrollmentConfirmed::class);
     }
 }

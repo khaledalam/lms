@@ -6,6 +6,7 @@ use App\Models\Lesson;
 use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreCommentRequest;
+use App\Events\NewCommentCreated;
 
 class CommentController extends Controller
 {
@@ -26,10 +27,12 @@ class CommentController extends Controller
 
         $data = $request->validated();
 
-        $lesson->comments()->create([
+        $comment = $lesson->comments()->create([
             'user_id' => $user->id,
             'body'    => $data['body'],
         ]);
+
+        event(new NewCommentCreated($comment));
 
         return back()->with('success', 'Comment added.');
     }
