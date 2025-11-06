@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Course;
 use Illuminate\Support\Str;
+use App\Support\CacheKeys;
 
 class CourseObserver
 {
@@ -29,7 +30,7 @@ class CourseObserver
      */
     public function created(Course $course): void
     {
-        //
+        CacheKeys::bump('courses');
     }
 
     /**
@@ -37,7 +38,7 @@ class CourseObserver
      */
     public function updated(Course $course): void
     {
-        //
+        CacheKeys::bump('courses');
     }
 
     /**
@@ -45,7 +46,7 @@ class CourseObserver
      */
     public function deleted(Course $course): void
     {
-        //
+        CacheKeys::bump('courses');
     }
 
     /**
@@ -53,7 +54,7 @@ class CourseObserver
      */
     public function restored(Course $course): void
     {
-        //
+        CacheKeys::bump('courses');
     }
 
     /**
@@ -61,6 +62,6 @@ class CourseObserver
      */
     public function forceDeleted(Course $course): void
     {
-        //
+        CacheKeys::bump('courses');
     }
 }
