@@ -40,11 +40,12 @@ Route::middleware('auth')->group(function () {
 
     // Attachments on lessons
     Route::get('/lessons/{lesson}/attachment', [\App\Http\Controllers\LessonController::class, 'attachment'])->name('lessons.attachment');
-    
+
     // Instructor: view student roster
     Route::get('/courses/{course}/students', [EnrollmentController::class, 'index'])->name('courses.students');
 
-   
+    // Student Comments
+    Route::get('/me/comments', [CommentController::class, 'myComments'])->name('me.comments');
 });
 
 // For Debug:

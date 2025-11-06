@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lesson;
+use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreCommentRequest;
 
@@ -31,5 +32,24 @@ class CommentController extends Controller
         ]);
 
         return back()->with('success', 'Comment added.');
+    }
+
+    /**
+     * GET /me/comments
+     * View comments made by the authenticated user.
+     */
+    public function myComments()
+    {
+        $user = Auth::user();
+
+        $comments = Comment::with([
+            'lesson:id,course_id,title',
+            'lesson.course:id,title'
+        ])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->paginate(12);
+
+        return view('comments.my', compact('comments'));
     }
 }

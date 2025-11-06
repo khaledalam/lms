@@ -17,8 +17,12 @@
                     </x-nav-link>
 
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link :href="route('courses.index')" :active="request()->routeIs('courses.*')">
+                        <x-nav-link :href="route('courses.index')" :active="request()->routeIs(['courses.*', 'lessons.*'])">
                             {{ __('Courses') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('me.comments')" :active="request()->routeIs('me.comments')">
+                            {{ __('My Comments') }}
                         </x-nav-link>
 
                     </div>
