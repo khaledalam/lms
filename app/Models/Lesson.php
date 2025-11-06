@@ -52,7 +52,7 @@ class Lesson extends Model
     public function comments()
     {
         // Return related Comment models for this lesson.
-        return $this->hasMany(Comment::class)->orderBy('created_at', 'asc');docker  
+        return $this->hasMany(Comment::class)->orderBy('created_at', 'asc');  
     }
 
     /** 

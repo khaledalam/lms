@@ -1,6 +1,6 @@
 # Laravel Learning Management System (LMS)
 
-A mini learning management system built with **Laravel 12**, featuring lessons, comments, file attachments, instructor/student roles, analytics dashboards, and API endpoints — fully containerized using **Docker** with SQLite for simplicity.
+A mini learning management system built with **Laravel 12**, featuring lessons, comments, file attachments, instructor/student roles, email notitfications, analytics dashboards, and API endpoints — fully containerized using **Docker** with SQLite for simplicity.
 
 ---
 
@@ -9,7 +9,7 @@ A mini learning management system built with **Laravel 12**, featuring lessons, 
 ### Core
 - Instructor & Student roles with policies
 - Courses, Lessons, Comments, Attachments
-- Enrollment system
+- Enrollment system (with EnrollmentConfirmed email notifications)
 - Role-based dashboards (instructor/student)
 - Chart.js analytics
 - Search & filtering (title/content/deep search)
@@ -107,6 +107,9 @@ Telescope and Laravel Debugbar are available locally for profiling:
 ```bash
 docker exec -it lms-app php artisan telescope:install
 docker exec -it lms-app php artisan migrate
+
+# Emails:
+docker compose exec app tail -f storage/logs/laravel.log
 ```
 
 Access Telescope at: `/telescope`

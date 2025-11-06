@@ -111,6 +111,13 @@ vite-preview:
 prepare: perms sqlite install key storage
 	@echo "✔ prepare done"
 
+fix-perms:
+	docker compose exec app sh -lc '\
+	  mkdir -p storage/logs bootstrap/cache && \
+	  chown -R www-data:www-data storage bootstrap/cache && \
+	  chmod -R ug+rwX storage bootstrap/cache \
+	'
+	
 all: up prepare migrate seed vite-build optimize
 	@echo "✔ all done -> http://localhost:8000"
 
