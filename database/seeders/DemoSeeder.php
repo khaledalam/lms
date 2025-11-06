@@ -9,6 +9,8 @@ use App\Models\Lesson;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\File;
 
 class DemoSeeder extends Seeder
 {
@@ -17,6 +19,14 @@ class DemoSeeder extends Seeder
      */
     public function run(): void
     {
+        // Clear old data
+        Storage::makeDirectory('lesson-attachments');
+
+        User::truncate();
+        Course::truncate();
+        Lesson::truncate();
+        Comment::truncate();
+
         // --- Users ----------------------------------------------------------
         // Instructors (fixed emails for easy login)
         $instructorA = User::updateOrCreate(
@@ -66,6 +76,12 @@ class DemoSeeder extends Seeder
         $instructors = collect([$instructorA, $instructorB]);
         $students    = collect([$student1, $student2, $student3]);
 
+        // Create lessons with optional attachments
+        $sampleFiles = [
+            base_path('storage/app/lesson-attachments/demo1.pdf'),
+            base_path('storage/app/lesson-attachments/demo2.txt'),
+        ];
+
         // --- Courses + Lessons + Enrollments + Comments ---------------------
         // Create 10 courses owned by random instructor
         $courses = collect();
@@ -100,6 +116,14 @@ class DemoSeeder extends Seeder
                         'lesson_id' => $lesson->id,
                         'user_id'   => $commenters->random()->id,
                     ]);
+                }
+
+                // 50% chance to attach a file
+                if (rand(0, 1) === 1) {
+                    $randomFile = $sampleFiles[array_rand($sampleFiles)];
+                    $path = Storage::putFile('lesson-attachments', new File($randomFile));
+                    $lesson->attachment_path = $path;
+                    $lesson->save();
                 }
             }
         }

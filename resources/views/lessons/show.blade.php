@@ -9,10 +9,18 @@
             <div class="bg-green-100 p-3">{{ session('success') }}</div>
         @endif
 
-        <a href="{{ route('courses.show', $lesson->course) }}" class="text-sm text-blue-600 hover:underline mb-4">← Back to
-            course</a>
+        <div class="flex justify-between items-center">
+            <a href="{{ route('courses.show', $lesson->course) }}" class="text-sm text-blue-600 hover:underline mb-4">←
+                Back
+                to course</a>
+
+            <a href="{{ route('lessons.edit', $lesson) }}" class="px-4 py-2 bg-black text-white rounded mb-4">Edit</a>
+        </div>
 
         <h1 class="text-2xl font-semibold mt-4">{{ $lesson->title }}</h1>
+
+
+
         <article class="prose max-w-none">
             {!! nl2br(e($lesson->content)) !!}
         </article>
@@ -32,6 +40,14 @@
                             <div>{{ $c->body }}</div>
                         </div>
                     @endforeach
+                </div>
+            @endif
+
+            @if ($lesson->attachment_path)
+                <div class="mt-4 mb-4">
+                    <a href="{{ route('lessons.attachment', $lesson) }}" class="text-blue-600 hover:underline">
+                        ⬇ Download Attachment
+                    </a>
                 </div>
             @endif
         </section>

@@ -31,8 +31,10 @@
                                     href="{{ route('courses.show', $course) }}">
                                     <div class="font-medium">{{ $course->title }}</div>
                                     <div class="text-sm text-gray-600">
-                                        {{ $course->published ? '🟢 Published' : '🔘 Draft' }} • {{ $course->students_count }}
-                                        students • <i>✍︎: {{ $course->instructor->name }}</i>
+                                        {{ $course->published ? '🟢 Published' : '🔘 Draft' }} •
+                                        {{ $course->students_count }}
+                                        students • {{ $course->lessons->count() }} lessons • <i>✍︎:
+                                            {{ $course->instructor->name }}</i>
                                     </div>
                                 </a>
                             @endforeach

@@ -30,9 +30,9 @@ class CourseApiController extends Controller
         // search
         if ($s = trim((string) $request->query('search', ''))) {
             $q->where(function ($qq) use ($s) {
-                $like = '%' . str_replace(['%','_'], ['\%','\_'], $s) . '%';
+                $like = '%' . str_replace(['%', '_'], ['\%', '\_'], $s) . '%';
                 $qq->where('title', 'like', $like)
-                   ->orWhere('description', 'like', $like);
+                    ->orWhere('description', 'like', $like);
             });
         }
 
@@ -55,8 +55,8 @@ class CourseApiController extends Controller
 
         return response()->json(
             $q->orderByDesc('id')
-              ->select(['id', 'title', 'slug', 'description', 'published', 'instructor_id'])
-              ->paginate($perPage)
+                ->select(['id', 'title', 'slug', 'description', 'published', 'instructor_id'])
+                ->paginate($perPage)
         );
     }
 
@@ -70,7 +70,7 @@ class CourseApiController extends Controller
         $validated = $request->validate([
             'title'       => 'required|string|max:150',
             'description' => 'nullable|string',
-            'published'   => 'boolean',
+            'published'   => 'sometimes|boolean',
         ]);
 
         $slug = $this->uniqueSlug($validated['title']);
@@ -83,7 +83,7 @@ class CourseApiController extends Controller
             'published'     => (bool) ($validated['published'] ?? false),
         ]);
 
-        return response()->json($course->only(['id','title','slug','description','published','instructor_id']), 201);
+        return response()->json($course->only(['id', 'title', 'slug', 'description', 'published', 'instructor_id']), 201);
     }
 
     /**
@@ -94,7 +94,7 @@ class CourseApiController extends Controller
         $this->authorize('view', $course);
 
         return response()->json(
-            $course->only(['id','title','slug','description','published','instructor_id'])
+            $course->only(['id', 'title', 'slug', 'description', 'published', 'instructor_id'])
         );
     }
 
@@ -127,7 +127,7 @@ class CourseApiController extends Controller
         $course->save();
 
         return response()->json(
-            $course->only(['id','title','slug','description','published','instructor_id'])
+            $course->only(['id', 'title', 'slug', 'description', 'published', 'instructor_id'])
         );
     }
 
@@ -152,8 +152,8 @@ class CourseApiController extends Controller
 
         while (
             Course::where('slug', $slug)
-                ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
-                ->exists()
+            ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
+            ->exists()
         ) {
             $slug = $base . '-' . $i;
             $i++;

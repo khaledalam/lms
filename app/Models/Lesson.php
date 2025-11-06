@@ -20,7 +20,7 @@ class Lesson extends Model
      * @var list<string>
      */
     protected $fillable = ['course_id', 'order', 'title', 'content'];
-    
+
     /**
      * Get the course that this lesson belongs to.
      *
@@ -53,5 +53,13 @@ class Lesson extends Model
     {
         // Return related Comment models for this lesson.
         return $this->hasMany(Comment::class);
+    }
+
+    /** 
+     * Check if Lesson has Attachment or not
+     */
+    public function hasAttachment(): bool
+    {
+        return !empty($this->attachment_path);
     }
 }

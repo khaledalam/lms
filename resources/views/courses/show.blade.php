@@ -45,7 +45,7 @@
                         <div class="border rounded p-3 flex items-center justify-between">
                             <a href="{{ route('lessons.show', $lesson) }}"
                                 class="font-medium underline">{{ $lesson->order }}.
-                                {{ $lesson->title }}</a>
+                                {{ $lesson->title }} @if ($lesson->attachment_path) 📎 @endif</a>
                             @if ($isInstructor)
                                 <div class="flex gap-3 items-center">
                                     @if ($course->lessons->count() > 1)

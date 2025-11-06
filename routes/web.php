@@ -23,7 +23,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-
     Route::resource('courses', CourseController::class);
 
     // Lessons (shallow so /lessons/{lesson}/edit works)
@@ -39,10 +38,16 @@ Route::middleware('auth')->group(function () {
     // Comments on lessons
     Route::post('/lessons/{lesson}/comments', [CommentController::class, 'store'])->name('lessons.comments.store');
 
+    // Attachments on lessons
+    Route::get('/lessons/{lesson}/attachment', [\App\Http\Controllers\LessonController::class, 'attachment'])->name('lessons.attachment');
+    
     // Instructor: view student roster
     Route::get('/courses/{course}/students', [EnrollmentController::class, 'index'])->name('courses.students');
+
+   
 });
 
+// For Debug:
 Route::post('/run-demo-seeder', function () {
     try {
         Artisan::call('migrate:fresh', ['--force' => true, '--seed' => true]);

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreCourseRequest;
 use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
@@ -54,11 +53,13 @@ class CourseController extends Controller
     {
         $this->authorize('create', Course::class);
 
+        $validated = $request->validated();
+
         $course = Course::create([
             'instructor_id' => Auth::id(),
-            'title' => $request->string('title'),
-            'description' => $request->input('description'),
-            'published' => (bool) $request->boolean('published'),
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'published' => (bool) $validated['published'],
         ]);
 
         return redirect()->route('courses.show', $course)
@@ -75,6 +76,7 @@ class CourseController extends Controller
         $course->load(['lessons' => fn($q) => $q->orderBy('order')]);
         $isInstructor = (int) $course->instructor_id === (int) Auth::id();
         $isEnrolled = $course->students()->where('users.id', Auth::id())->exists();
+
         return view('courses.show', compact('course', 'isInstructor', 'isEnrolled'));
     }
 
@@ -107,6 +109,7 @@ class CourseController extends Controller
         $this->authorize('delete', $course);
 
         $course->delete();
+
         return redirect()->route('courses.index')->with('success', 'Course deleted.');
     }
 }

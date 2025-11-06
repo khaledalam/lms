@@ -10,6 +10,7 @@
                     @isset($course->students_count)
                         • {{ $course->students_count }} students
                     @endisset
+                    • {{ $course->lessons->count() }} lessons
                     <i>• ✍︎: {{ $course->instructor->name }}</i>
                 </div>
             </a>

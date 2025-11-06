@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Lesson;
 use App\Models\Course;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use App\Http\Requests\StoreLessonRequest;
 
 class LessonController extends Controller
 {
@@ -21,23 +23,28 @@ class LessonController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Course $course)
+    public function store(StoreLessonRequest $request, Course $course)
     {
         $this->authorize('update', $course);
 
-        $data = $request->validate([
-            'title' => 'required|string|max:150',
-            'content' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
-        $max = (int) $course->lessons()->max('order');
+        $maxOrder = (int) $course->lessons()->max('order');
+
         $lesson = $course->lessons()->create([
-            'title' => $data['title'],
-            'content' => $data['content'] ?? null,
-            'order' => $max + 1,
+            'title'   => $validated['title'],
+            'content' => $validated['content'] ?? null,
+            'order'   => $maxOrder + 1,
         ]);
 
-        return redirect()->route('courses.show', $course)->with('success', 'Lesson added.');
+        if ($request->hasFile('attachment')) {
+            $lesson->attachment_path = Storage::putFile('lesson-attachments', $request->file('attachment'));
+            $lesson->save();
+        }
+
+        return redirect()
+            ->route('courses.show', $course)
+            ->with('success', 'Lesson created successfully!');
     }
 
     /**
@@ -68,16 +75,36 @@ class LessonController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Lesson $lesson)
+    public function update(StoreLessonRequest $request, Lesson $lesson)
     {
         $this->authorize('update', $lesson);
 
-        $data = $request->validate([
-            'title' => 'required|string|max:150',
-            'content' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
-        $lesson->update($data);
+        if (isset($validated['title'])) {
+            $lesson->title = $validated['title'];
+        }
+
+        if (isset($validated['content'])) {
+            $lesson->content = $validated['content'];
+        }
+
+
+        // Remove existing attachment if requested
+        if ($request->boolean('remove_attachment') && $lesson->attachment_path) {
+            Storage::delete($lesson->attachment_path);
+            $lesson->attachment_path = null;
+        }
+
+        // Replace / set new attachment if uploaded
+        if ($request->hasFile('attachment')) {
+            if ($lesson->attachment_path) {
+                Storage::delete($lesson->attachment_path);
+            }
+            $lesson->attachment_path = Storage::putFile('lesson-attachments', $request->file('attachment'));
+        }
+
+        $lesson->save();
 
         return redirect()->route('courses.show', $lesson->course)->with('success', 'Lesson updated.');
     }
@@ -118,7 +145,7 @@ class LessonController extends Controller
     public function moveDown(Lesson $lesson)
     {
         $this->authorize('update', $lesson);
-        
+
         $next = $lesson->course->lessons()->where('order', '>', $lesson->order)->orderBy('order')->first();
         if ($next) {
             [$lesson->order, $next->order] = [$next->order, $lesson->order];
@@ -127,5 +154,17 @@ class LessonController extends Controller
         }
 
         return back();
+    }
+
+    public function attachment(Lesson $lesson)
+    {
+        $this->authorize('view', $lesson);
+
+        if (!$lesson->attachment_path) abort(404);
+
+        $filename = Str::slug($lesson->title) . '.' .
+            pathinfo($lesson->attachment_path, PATHINFO_EXTENSION);
+
+        return Storage::download($lesson->attachment_path, $filename);
     }
 }

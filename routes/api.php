@@ -6,11 +6,14 @@ use App\Http\Controllers\Api\CourseApiController;
 use App\Http\Controllers\Api\LessonApiController;
 use App\Http\Controllers\Api\CommentApiController;
 use App\Http\Controllers\Api\EnrollmentApiController;
+use App\Http\Controllers\Api\AuthApiController;
 
 // test api
 Route::get('/ping', function () {
     return response()->json(['message' => 'pong']);
 });
+
+Route::post('/auth/token', [AuthApiController::class, 'login'])->name('api.auth.token');
 
 // Protected routes will go here (auth:sanctum)
 Route::middleware('auth:sanctum')->name('api.')->group(function () {

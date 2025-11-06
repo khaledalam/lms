@@ -65,7 +65,7 @@
                     Email: <code>instructor2@example.com</code><br>Password: <code>password</code>
                 </p>
 
-                <hr class="my-3 border-gray-300" />
+                <hr class="mt-4 mb-4 border-gray-300" />
 
                 <p><strong>Students:</strong><br>
                     Email: <code>student1@example.com</code><br>Password: <code>password</code><br><br>
