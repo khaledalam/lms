@@ -17,7 +17,7 @@
                 <p class="text-gray-700 mt-1">{{ $course->description }}</p>
             </div>
             <div class="flex gap-3 items-center">
-                @if ($isInstructor)
+                @if ($isInstructorOwner)
                     <a href="{{ route('courses.edit', $course) }}" class="px-3 py-2 border rounded">Edit</a>
                     <a href="{{ route('courses.students', $course) }}" class="px-3 py-2 border rounded"
                         style="width: 130px;">Students
@@ -46,7 +46,7 @@
                             <a href="{{ route('lessons.show', $lesson) }}"
                                 class="font-medium underline">{{ $lesson->order }}.
                                 {{ $lesson->title }} @if ($lesson->attachment_path) 📎 @endif</a>
-                            @if ($isInstructor)
+                            @if ($isInstructorOwner)
                                 <div class="flex gap-3 items-center">
                                     @if ($course->lessons_count > 1)
                                         <form method="POST" action="{{ route('lessons.move_up', $lesson) }}"

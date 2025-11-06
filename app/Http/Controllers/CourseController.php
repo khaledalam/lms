@@ -120,17 +120,19 @@ class CourseController extends Controller
             'lessons:id,course_id,title,order',
         ])->loadCount('students');
 
-        $isInstructor = (int) $course->instructor_id === (int) Auth::id();
+        $isInstructorOwner = (int) $course->instructor_id === (int) Auth::id();
+        $isInstructor = Auth::user()->isInstructor();
+
 
         $isEnrolled = Auth::check()
             ? $course->students()->whereKey(Auth::id())->exists()
             : false;
 
         $lessons = Cache::remember("course_{$course->id}_lessons", 300, function () use ($course) {
-                return $course->lessons()->orderBy('order')->get(['id', 'title', 'course_id', 'order']);
-            });
+            return $course->lessons()->orderBy('order')->get(['id', 'title', 'course_id', 'order', 'attachment_path']);
+        });
 
-        return view('courses.show', compact('course', 'isInstructor', 'isEnrolled',  'lessons'));
+        return view('courses.show', compact('course', 'isInstructor', 'isInstructorOwner', 'isEnrolled',  'lessons'));
     }
 
     /**
