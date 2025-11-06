@@ -14,18 +14,21 @@
             <form method="GET" class="mb-4 flex flex-wrap justify-center gap-3" style="align-items: end;">
                 <div>
                     <label for="search-input" class="block text-sm font-medium mb-1">Search</label>
-                    <input id="search-input" type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Course title, description, lesson title, or lesson content …"
+                    <input id="search-input" type="text" name="q" value="{{ $filters['q'] ?? '' }}"
+                        placeholder="Course title, description, lesson title, or lesson content …"
                         class="border rounded p-2" style="width: 300px;">
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium mb-1">Published</label>
-                    <select name="published" class="border rounded p-2">
-                        <option value="" @selected(($filters['published'] ?? '') === '')>All</option>
-                        <option value="1" @selected(($filters['published'] ?? '') === '1')>Published</option>
-                        <option value="0" @selected(($filters['published'] ?? '') === '0')>Draft</option>
-                    </select>
-                </div>
+                @if (Auth::user()->isInstructor())
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Published</label>
+                        <select name="published" class="border rounded p-2">
+                            <option value="" @selected(($filters['published'] ?? '') === '')>All</option>
+                            <option value="1" @selected(($filters['published'] ?? '') === '1')>Published</option>
+                            <option value="0" @selected(($filters['published'] ?? '') === '0')>Draft</option>
+                        </select>
+                    </div>
+                @endif
 
                 <button class="px-4 py-2 bg-gray-800 text-white rounded">Apply</button>
 
@@ -85,11 +88,11 @@
 
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <h3 class="text-lg font-semibold mb-3">Available Courses</h3>
-                    @if ($available->isEmpty())
+                    @if ($courses->isEmpty())
                         <p class="text-gray-600">No more courses available.</p>
                     @else
-                        @include('courses.partials._grid_enrollable', ['courses' => $available])
-                        <div class="mt-3">{{ $available->links() }}</div>
+                        @include('courses.partials._grid_enrollable', ['courses' => $courses])
+                        <div class="mt-3">{{ $courses->links() }}</div>
                     @endif
                 </div>
             @endisset

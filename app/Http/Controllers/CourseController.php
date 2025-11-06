@@ -45,6 +45,14 @@ class CourseController extends Controller
         }
 
         // Student: only published courses, with search
+        $enrolled = $user->coursesEnrolled()
+            ->searchDeep($q)
+            ->withCount('students')
+            ->published(true)
+            ->orderBy('title')
+            ->paginate(8)
+            ->appends($request->query());
+
         $courses = Course::query()
             ->published(true)
             ->searchTitle($q)
@@ -54,6 +62,7 @@ class CourseController extends Controller
 
         return view('courses.index', [
             'courses' => $courses,
+            'enrolled' => $enrolled,
             'filters' => ['q' => $q, 'published' => $pubParam],
         ]);
     }
