@@ -7,6 +7,7 @@ use App\Models\Course;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Requests\StoreLessonRequest;
+use Illuminate\Support\Facades\Auth;
 
 class LessonController extends Controller
 {
@@ -54,9 +55,20 @@ class LessonController extends Controller
     {
         $this->authorize('view', $lesson);
 
-        $lesson->load('course', 'comments.user');
+        $lesson->load([
+            'course:id,title,instructor_id,published',
+            'comments' => fn($q) => $q->select(['id', 'lesson_id', 'user_id', 'body', 'created_at'])
+                ->latest(),
+            'comments.user:id,name',
+        ]);
 
-        return view('lessons.show', compact('lesson'));
+        $lesson->setRelation('course', $lesson->course->only(['id', 'title', 'instructor_id', 'published']));
+
+        $course = $lesson->course;
+        $comments = $lesson->comments;
+        $lesson = $lesson->only(['id', 'course_id', 'title', 'content', 'attachment_path']);
+
+        return view('lessons.show', compact('lesson',  'course', 'comments'));
     }
 
     /**

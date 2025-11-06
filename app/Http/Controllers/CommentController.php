@@ -42,13 +42,13 @@ class CommentController extends Controller
     {
         $user = Auth::user();
 
-        $comments = Comment::with([
-            'lesson:id,course_id,title',
-            'lesson.course:id,title'
-        ])
-            ->where('user_id', $user->id)
-            ->latest()
-            ->paginate(12);
+        $comments = Comment::where('user_id', $user->id)
+            ->with([
+                'lesson:id,title,course_id',
+                'lesson.course:id,title'
+            ])
+            ->orderByDesc('created_at')
+            ->simplePaginate(12);
 
         return view('comments.my', compact('comments'));
     }

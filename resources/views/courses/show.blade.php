@@ -21,7 +21,7 @@
                     <a href="{{ route('courses.edit', $course) }}" class="px-3 py-2 border rounded">Edit</a>
                     <a href="{{ route('courses.students', $course) }}" class="px-3 py-2 border rounded"
                         style="width: 130px;">Students
-                        ({{ $course->students->count() }})</a>
+                        ({{ $course->students_count }})</a>
                     <a href="{{ route('courses.lessons.create', $course) }}"
                         class="px-3 py-2 center bg-black text-white rounded" style="width: 95px;">+ Lesson</a>
                 @elseif(!$isEnrolled && Auth::user()->isStudent())
@@ -37,18 +37,18 @@
             <h2 class="text-xl font-semibold mb-2">Lessons</h2>
             @if (!$isEnrolled && !$isInstructor)
                 <p class="text-gray-600 mb-4">⚠️ Enroll in this course to access the lessons.</p>
-            @elseif ($course->lessons->isEmpty())
+            @elseif ($lessons->isEmpty())
                 <p class="text-gray-600">No lessons yet.</p>
             @else
                 <div class="space-y-2">
-                    @foreach ($course->lessons as $lesson)
+                    @foreach ($lessons as $lesson)
                         <div class="border rounded p-3 flex items-center justify-between">
                             <a href="{{ route('lessons.show', $lesson) }}"
                                 class="font-medium underline">{{ $lesson->order }}.
                                 {{ $lesson->title }} @if ($lesson->attachment_path) 📎 @endif</a>
                             @if ($isInstructor)
                                 <div class="flex gap-3 items-center">
-                                    @if ($course->lessons->count() > 1)
+                                    @if ($course->lessons_count > 1)
                                         <form method="POST" action="{{ route('lessons.move_up', $lesson) }}"
                                             class="inline">
                                             @csrf

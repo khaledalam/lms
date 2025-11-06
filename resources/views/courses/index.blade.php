@@ -60,7 +60,7 @@
                                     <div class="text-sm text-gray-600">
                                         {{ $course->published ? '🟢 Published' : '🔘 Draft' }} •
                                         {{ $course->students_count }}
-                                        students • {{ $course->lessons->count() }} lessons • <i>✍︎:
+                                        students • {{ $course->lessons_count }} lessons • <i>✍︎:
                                             {{ $course->instructor->name }}</i>
                                     </div>
                                 </a>

@@ -14,6 +14,8 @@ use Illuminate\Http\File;
 
 class DemoSeeder extends Seeder
 {
+    const COURSES_COUNT = 10;
+
     /**
      * Run the database seeds.
      */
@@ -83,9 +85,9 @@ class DemoSeeder extends Seeder
         ];
 
         // --- Courses + Lessons + Enrollments + Comments ---------------------
-        // Create 10 courses owned by random instructor
+        // Create self::COURSES_COUNT courses owned by random instructor
         $courses = collect();
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < self::COURSES_COUNT; $i++) {
             $owner  = $instructors->random();
             /** @var Course $course */
             $course = Course::factory()->create([
@@ -93,8 +95,8 @@ class DemoSeeder extends Seeder
             ]);
             $courses->push($course);
 
-            // Lessons (5-8), maintain sequential 'order'
-            $lessonsCount = fake()->numberBetween(5, 8);
+            // Lessons (5-15), maintain sequential 'order'
+            $lessonsCount = fake()->numberBetween(5, 15);
             for ($ord = 1; $ord <= $lessonsCount; $ord++) {
                 Lesson::factory()->create([
                     'course_id' => $course->id,
@@ -106,11 +108,11 @@ class DemoSeeder extends Seeder
             $enrolled = $students->random(fake()->numberBetween(1, $students->count()));
             $course->students()->syncWithoutDetaching($enrolled->pluck('id')->all());
 
-            // Comments per lesson: 0-3 by enrolled students or instructor
+            // Comments per lesson: 0-5 by enrolled students or instructor
             $commenters = $enrolled->push($owner);
             $course->load('lessons');
             foreach ($course->lessons as $lesson) {
-                $commentsNum = fake()->numberBetween(0, 3);
+                $commentsNum = fake()->numberBetween(0, 5);
                 for ($c = 0; $c < $commentsNum; $c++) {
                     Comment::factory()->create([
                         'lesson_id' => $lesson->id,
@@ -128,7 +130,7 @@ class DemoSeeder extends Seeder
             }
         }
 
-        $this->command?->info('Demo data seeded: 2 instructors, 3 students, 10 courses with lessons, enrollments, comments.');
+        $this->command?->info('Demo data seeded: 2 instructors, 3 students, ' . self::COURSES_COUNT . ' courses with lessons, enrollments, comments.');
         $this->command?->info('Login with instructor1@example.com / password or student1@example.com / password');
     }
 }

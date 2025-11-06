@@ -5,7 +5,7 @@
                 <div class="font-medium">{{ $course->title }}</div>
                 <div class="text-sm text-gray-600 mb-3">
                     {{ $course->published ? '🟢 Published' : '🔘 Draft' }} • {{ $course->students_count }} students •
-                    {{ $course->lessons->count() }} lessons
+                    {{ $course->lessons_count }} lessons
                 </div>
                 <p class="text-sm text-gray-700 line-clamp-3">{{ Str::limit($course->description, 140) }}</p>
             </div>

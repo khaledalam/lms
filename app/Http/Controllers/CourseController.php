@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreCourseRequest;
 use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class CourseController extends Controller
 {
@@ -22,19 +23,24 @@ class CourseController extends Controller
         if ($user->isInstructor()) {
             // Instructor: show their list (with optional filters), plus a public list below.
             $myCourses = Course::query()
+                ->select(['id', 'title', 'slug', 'published', 'instructor_id'])
                 ->instructor($user->id)
                 ->searchDeep($q)
                 ->published($published)
-                ->withCount('students')
+                ->withCount(['students', 'lessons'])
+                ->with(['instructor:id,name'])
                 ->orderByDesc('id')
-                ->paginate(8)
+                ->simplePaginate(8)
                 ->appends($request->query());
 
             $publishedList = Course::query()
+                ->select(['id', 'title', 'slug', 'published', 'instructor_id'])
                 ->published(true)
                 ->searchDeep($q)
+                ->withCount(['students', 'lessons'])
+                ->with(['instructor:id,name'])
                 ->orderBy('title')
-                ->paginate(12)
+                ->simplePaginate(12)
                 ->appends($request->query());
 
             return view('courses.index', [
@@ -46,18 +52,24 @@ class CourseController extends Controller
 
         // Student: only published courses, with search
         $enrolled = $user->coursesEnrolled()
+            ->select(['courses.id', 'title', 'slug', 'published', 'instructor_id'])
             ->searchDeep($q)
             ->withCount('students')
             ->published(true)
+            ->withCount(['students', 'lessons'])
+            ->with(['instructor:id,name'])
             ->orderBy('title')
-            ->paginate(8)
+            ->simplePaginate(8)
             ->appends($request->query());
 
         $courses = Course::query()
+            ->select(['id', 'title', 'slug', 'published', 'instructor_id'])
             ->published(true)
             ->searchTitle($q)
+            ->withCount(['students', 'lessons'])
+            ->with(['instructor:id,name'])
             ->orderBy('title')
-            ->paginate(12)
+            ->simplePaginate(12)
             ->appends($request->query());
 
         return view('courses.index', [
@@ -104,11 +116,21 @@ class CourseController extends Controller
     {
         $this->authorize('view', $course);
 
-        $course->load(['lessons' => fn($q) => $q->orderBy('order')]);
-        $isInstructor = (int) $course->instructor_id === (int) Auth::id();
-        $isEnrolled = $course->students()->where('users.id', Auth::id())->exists();
+        $course->load([
+            'lessons:id,course_id,title,order',
+        ])->loadCount('students');
 
-        return view('courses.show', compact('course', 'isInstructor', 'isEnrolled'));
+        $isInstructor = (int) $course->instructor_id === (int) Auth::id();
+
+        $isEnrolled = Auth::check()
+            ? $course->students()->whereKey(Auth::id())->exists()
+            : false;
+
+        $lessons = Cache::remember("course_{$course->id}_lessons", 300, function () use ($course) {
+            return $course->lessons()->orderBy('order')->get(['id', 'title', 'course_id', 'order']);
+        });
+
+        return view('courses.show', compact('course', 'isInstructor', 'isEnrolled',  'lessons'));
     }
 
     /**

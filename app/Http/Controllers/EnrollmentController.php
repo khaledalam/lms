@@ -62,9 +62,10 @@ class EnrollmentController extends Controller
         }
 
         $students = $course->students()
-            ->select('users.id', 'users.name', 'users.email', 'users.created_at')
+            ->withPivot('created_at')
+            ->select('users.id', 'users.name', 'users.email')
             ->orderBy('users.name')
-            ->paginate(20);
+            ->simplePaginate(20);
 
         return view('courses.students', compact('course', 'students'));
     }
