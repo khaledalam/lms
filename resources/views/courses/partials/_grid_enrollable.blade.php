@@ -7,16 +7,23 @@
                     {{ $course->published ? '🟢 Published' : '🔘 Draft' }} • {{ $course->students_count }} students •
                     {{ $course->lessons_count }} lessons
                 </div>
-                <p class="text-sm text-gray-700 line-clamp-3">{{ Str::limit($course->description, 140) }}</p>
+                <p class="text-sm text-gray-700 line-clamp-3">
+                    {{ Str::limit((string) ($course->description ?? ''), 140) }}</p>
             </div>
 
             <div class="mt-4 flex items-center gap-2">
                 <a href="{{ route('courses.show', $course) }}" class="px-3 py-2 border rounded">Details</a>
 
-                <form method="POST" action="{{ route('courses.enroll', $course) }}" class="inline">
-                    @csrf
-                    <button class="px-3 py-2 bg-gray-800 text-white rounded">Enroll</button>
-                </form>
+                @php
+                    $is_enrolled = isset($course->enrolled_count) && $course->enrolled_count > 0;
+                @endphp
+
+                @unless ($is_enrolled)
+                    <form method="POST" action="{{ route('courses.enroll', $course) }}" class="inline">
+                        @csrf
+                        <button class="px-3 py-2 bg-gray-800 text-white rounded">Enroll</button>
+                    </form>
+                @endunless
             </div>
         </div>
     @endforeach

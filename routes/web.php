@@ -8,6 +8,7 @@ use App\Http\Controllers\LessonController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
+use Laravel\Horizon\Horizon;
 
 Route::get('/', fn() => redirect()->route('courses.index'));
 
@@ -51,7 +52,7 @@ Route::middleware('auth')->group(function () {
 Route::post('/run-demo-seeder', function () {
     try {
         Artisan::call('migrate:fresh', ['--force' => true, '--seed' => true]);
-        return response()->json(['success' => true, 'message' => 'Demo data seeded successfully!']);
+        return response()->json(['success' => true, 'message' => 'Demo data seeded successfully!', 'csrf' => csrf_token(),]);
     } catch (\Throwable $e) {
         return response()->json(['success' => false, 'message' => $e->getMessage()]);
     }

@@ -6,7 +6,7 @@ use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Enums\UserRoles;
-use App\Notifications\EnrollmentConfirmed;
+use App\Jobs\SendEnrollmentEmail;
 
 class EnrollmentController extends Controller
 {
@@ -43,7 +43,9 @@ class EnrollmentController extends Controller
         // Enroll (pivot attach; syncWithoutDetaching is also fine)
         $course->students()->attach($user->id);
 
-        $user->notify(new EnrollmentConfirmed($course));
+        dispatch(new SendEnrollmentEmail($user, $course));
+
+        // $user->notify(new EnrollmentConfirmed($course));
 
         return back()->with('success', 'Enrolled successfully!');
     }

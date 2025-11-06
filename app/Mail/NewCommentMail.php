@@ -11,6 +11,8 @@ class NewCommentMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public Comment $comment;
+
     /**
      * Create a new message instance.
      */

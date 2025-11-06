@@ -6,10 +6,8 @@ services:
     container_name: lms-app
     volumes:
       - .:/var/www/html
-    environment:
-      APP_ENV: local
-      APP_DEBUG: "true"
-      LOG_CHANNEL: stack
+    env_file:
+      - .env
     depends_on: []
 
   web:
@@ -23,7 +21,7 @@ services:
     depends_on:
       - app
 
-  # Queue worker (database driver)
+  # Queue worker
   worker:
     build:
       context: .
@@ -46,6 +44,22 @@ services:
       - .:/var/www/html
     depends_on:
       - app
+  redis:
+    container_name: lms-redis
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+
+  horizon:
+    container_name: lms-horizon
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    command: php artisan horizon
+    depends_on: [app, redis]
+    volumes:
+      - .:/var/www/html
+    env_file:
+      - .env
 
   node:
     image: node:20-alpine

@@ -16,8 +16,9 @@ A mini learning management system built with **Laravel 12**, featuring lessons, 
 
 ### Technical
 - Laravel 12 / PHP 8.3
-- Tailwind CSS + Blade templates
+- Blade templates
 - SQLite database (via Docker)
+- Horizon + Redis Services
 - File caching layer with Cache::remember()
 - Telescope & Debugbar integration for local monitoring
 - Event-based cache invalidation
@@ -82,9 +83,9 @@ APP_URL=http://localhost:8000
 DB_CONNECTION=sqlite
 DB_DATABASE=/var/www/html/database/database.sqlite
 
-CACHE_STORE=file
+CACHE_STORE=redis
 SESSION_DRIVER=file
-QUEUE_CONNECTION=sync
+QUEUE_CONNECTION=redis
 ```
 
 ---
@@ -113,6 +114,19 @@ docker compose exec app tail -f storage/logs/laravel.log
 ```
 
 Access Telescope at: `/telescope`
+
+#### Access Laravel Horizon at:
+http://localhost:8000/horizon￼
+
+#### Check Telescope jobs (for debugging) at:
+http://localhost:8000/telescope/jobs￼
+
+#### Dispatching Example Job:
+```bash
+docker compose exec app php artisan tinker
+>>> dispatch((new \App\Jobs\SendEnrollmentEmail(\App\Models\User::first(), \App\Models\Course::first()))->onQueue('default'));
+```
+
 
 ---
 

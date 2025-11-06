@@ -67,6 +67,7 @@ class CourseController extends Controller
             ->published(true)
             ->searchTitle($q)
             ->withCount(['students', 'lessons'])
+            ->withCount(['students as enrolled_count' => fn($q2) => $q2->where('users.id', $user->id)])
             ->with(['instructor:id,name'])
             ->orderBy('title')
             ->simplePaginate(12)

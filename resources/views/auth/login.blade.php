@@ -75,7 +75,7 @@
 
             <div class="text-center mt-6">
                 <button id="runSeederBtn"
-                    class="inline-flex border items-center px-4 py-2 bg-indigo-600 text-black text-sm font-semibold rounded-md hover:bg-indigo-700 focus:outline-none">
+                    class="inline-flex border items-center px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-md hover:bg-indigo-700 focus:outline-none">
                     ▶ Run Demo Seeder (migrate:fresh)
                 </button>
 
@@ -122,6 +122,12 @@
                             result.classList.remove('text-red-600');
                             result.classList.add('text-green-600');
                             result.textContent = '✅ ' + data.message;
+
+                            //to handle session CSRF token update after seeding
+                            setTimeout(() => {
+                                window.location.replace(window.location.href);
+                            }, 1000);
+
                         } else {
                             result.classList.remove('text-green-600');
                             result.classList.add('text-red-600');
