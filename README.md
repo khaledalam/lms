@@ -127,6 +127,12 @@ docker compose exec app php artisan tinker
 >>> dispatch((new \App\Jobs\SendEnrollmentEmail(\App\Models\User::first(), \App\Models\Course::first()))->onQueue('default'));
 ```
 
+#### Cleanup horizon redis data:
+
+```bash
+docker compose exec redis redis-cli FLUSHALL
+```
+
 
 ---
 

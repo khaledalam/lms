@@ -119,7 +119,7 @@ class CourseController extends Controller
 
         $course->load([
             'lessons:id,course_id,title,order',
-        ])->loadCount('students');
+        ])->loadCount('students')->loadCount('lessons');
 
         $isInstructorOwner = (int) $course->instructor_id === (int) Auth::id();
         $isInstructor = Auth::user()->isInstructor();
