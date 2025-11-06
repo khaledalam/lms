@@ -127,8 +127,8 @@ class CourseController extends Controller
             : false;
 
         $lessons = Cache::remember("course_{$course->id}_lessons", 300, function () use ($course) {
-            return $course->lessons()->orderBy('order')->get(['id', 'title', 'course_id', 'order']);
-        });
+                return $course->lessons()->orderBy('order')->get(['id', 'title', 'course_id', 'order']);
+            });
 
         return view('courses.show', compact('course', 'isInstructor', 'isEnrolled',  'lessons'));
     }

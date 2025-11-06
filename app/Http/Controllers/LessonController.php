@@ -7,7 +7,6 @@ use App\Models\Course;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Requests\StoreLessonRequest;
-use Illuminate\Support\Facades\Auth;
 
 class LessonController extends Controller
 {

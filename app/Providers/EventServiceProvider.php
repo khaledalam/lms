@@ -24,5 +24,6 @@ class EventServiceProvider extends ServiceProvider
 
         Comment::saved($flushDashboard);
         Comment::deleted($flushDashboard);
+        
     }
 }
