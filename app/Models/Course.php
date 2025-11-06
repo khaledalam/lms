@@ -77,10 +77,85 @@ class Course extends Model
      * @param \Illuminate\Database\Eloquent\Builder $q
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopePublished($q)
+    public function scopePublished($q, $state = true)
     {
         // Constrain the query to courses where the 'published' flag is true.
-        // Example: Course::published()->where('title', 'like', '%Laravel%')->get();
-        return $q->where('published', true);
+        if (is_null($state)) return $q;
+        return $q->where('published', (bool)$state);
+    }
+
+    /** 
+     * Search by title (case-insensitive LIKE)
+     */
+    public function scopeSearchTitle($q, ?string $term)
+    {
+        if (!filled($term)) return $q;
+        $t = trim($term);
+        return $q->where('title', 'like', '%' . $t . '%');
+    }
+
+    /** 
+     * Search by description (case-insensitive LIKE)
+     */
+    public function scopeSearchDescription($q, ?string $term)
+    {
+        if (!filled($term)) return $q;
+        $t = trim($term);
+        return $q->where('description', 'like', '%' . $t . '%');
+    }
+
+    /** 
+     * Search by title or description (case-insensitive LIKE)
+     */
+    public function scopeSearchTitleOrDescription($q, ?string $term)
+    {
+        if (!filled($term)) return $q;
+        $t = trim($term);
+        return $q->where(function ($qq) use ($t) {
+            $qq->where('title', 'like', "%{$t}%")
+                ->orWhere('description', 'like', "%{$t}%");
+        });
+    }
+
+    /**
+     * Search by course title, description, lesson title, or lesson content.
+     */
+    public function scopeSearchDeep($q, ?string $term)
+    {
+        if (!filled($term)) {
+            return $q;
+        }
+
+        $t = trim($term);
+
+        return $q->where(function ($qq) use ($t) {
+            // Match on course title or description
+            $qq->where('title', 'like', "%{$t}%")
+                ->orWhere('description', 'like', "%{$t}%")
+                // Match on related lessons' title/content
+                ->orWhereHas('lessons', function ($lq) use ($t) {
+                    $lq->where('title', 'like', "%{$t}%")
+                        ->orWhere('content', 'like', "%{$t}%");
+                });
+        })->distinct();
+    }
+
+    /** 
+     * Search by title or description or lessons{title or content} (case-insensitive LIKE)
+     */
+    public function scopeSearchTitleOrDescriptionOrLessons($q, ?string $term)
+    {
+        if (!filled($term)) return $q;
+        $t = trim($term);
+        return $q->orWhere('title', 'like', '%' . $t . '%')
+            ->orWhere('description', 'like', '%' . $t . '%');
+    }
+
+    /** 
+     * Filter by instructor user id
+     */
+    public function scopeInstructor($q, int $userId)
+    {
+        return $q->where('instructor_id', $userId);
     }
 }

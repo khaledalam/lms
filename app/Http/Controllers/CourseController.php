@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreCourseRequest;
 use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
@@ -11,29 +12,50 @@ class CourseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
+        $q        = $request->string('q')->toString();                 // search term
+        $pubParam = $request->query('published');                      // '1' | '0' | null
+        $published = isset($pubParam) ? (int) $pubParam : null;        // convert to int or null
 
         if ($user->isInstructor()) {
-            $myCourses = Course::where('instructor_id', $user->id)
-                ->withCount('students')->latest()->paginate(3);
+            // Instructor: show their list (with optional filters), plus a public list below.
+            $myCourses = Course::query()
+                ->instructor($user->id)
+                ->searchDeep($q)
+                ->published($published)
+                ->withCount('students')
+                ->orderByDesc('id')
+                ->paginate(8)
+                ->appends($request->query());
 
-            $published = Course::published()
-                ->withCount('students')->latest()->paginate(3);
+            $publishedList = Course::query()
+                ->published(true)
+                ->searchDeep($q)
+                ->orderBy('title')
+                ->paginate(12)
+                ->appends($request->query());
 
-            return view('courses.index', compact('myCourses', 'published'));
+            return view('courses.index', [
+                'myCourses' => $myCourses,
+                'published' => $publishedList,
+                'filters'   => ['q' => $q, 'published' => $pubParam],
+            ]);
         }
 
-        // Student: split into enrolled vs available
-        $enrolled = $user->coursesEnrolled()
-            ->withCount('students')->latest()->paginate(12);
+        // Student: only published courses, with search
+        $courses = Course::query()
+            ->published(true)
+            ->searchTitle($q)
+            ->orderBy('title')
+            ->paginate(12)
+            ->appends($request->query());
 
-        $available = Course::published()
-            ->whereDoesntHave('students', fn($q) => $q->where('users.id', $user->id))
-            ->withCount('students')->latest()->paginate(12);
-
-        return view('courses.index', compact('enrolled', 'available'));
+        return view('courses.index', [
+            'courses' => $courses,
+            'filters' => ['q' => $q, 'published' => $pubParam],
+        ]);
     }
 
     /**

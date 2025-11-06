@@ -11,6 +11,30 @@
                 <div class="bg-green-100 p-3 rounded mb-4">{{ session('success') }}</div>
             @endif
 
+            <form method="GET" class="mb-4 flex flex-wrap justify-center gap-3" style="align-items: end;">
+                <div>
+                    <label for="search-input" class="block text-sm font-medium mb-1">Search</label>
+                    <input id="search-input" type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Course title, description, lesson title, or lesson content …"
+                        class="border rounded p-2" style="width: 300px;">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">Published</label>
+                    <select name="published" class="border rounded p-2">
+                        <option value="" @selected(($filters['published'] ?? '') === '')>All</option>
+                        <option value="1" @selected(($filters['published'] ?? '') === '1')>Published</option>
+                        <option value="0" @selected(($filters['published'] ?? '') === '0')>Draft</option>
+                    </select>
+                </div>
+
+                <button class="px-4 py-2 bg-gray-800 text-white rounded">Apply</button>
+
+                @if (request()->hasAny(['q', 'published']))
+                    <a href="{{ route('courses.index') }}" class="text-sm underline ml-2">Reset</a>
+                @endif
+            </form>
+            <hr class="mb-6">
+
             @isset($myCourses)
                 {{-- INSTRUCTOR VIEW --}}
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-8">
