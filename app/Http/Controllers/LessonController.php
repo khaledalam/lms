@@ -141,6 +141,7 @@ class LessonController extends Controller
         $this->authorize('update', $lesson);
 
         $prev = $lesson->course->lessons()->where('order', '<', $lesson->order)->orderBy('order', 'desc')->first();
+        
         if ($prev) {
             [$lesson->order, $prev->order] = [$prev->order, $lesson->order];
             $lesson->save();

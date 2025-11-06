@@ -48,6 +48,7 @@
                                 {{ $lesson->title }} @if ($lesson->attachment_path) 📎 @endif</a>
                             @if ($isInstructorOwner)
                                 <div class="flex gap-3 items-center">
+                                    {{ $lesson->order }}
                                     @if ($course->lessons_count > 1)
                                         <form method="POST" action="{{ route('lessons.move_up', $lesson) }}"
                                             class="inline">

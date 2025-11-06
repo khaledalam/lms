@@ -50,7 +50,7 @@ class Course extends Model
         // Return related Lesson models ordered by their sequence/order.
         // Useful for rendering lessons in the intended order:
         // $course->lessons->each(...)
-        return $this->hasMany(Lesson::class)->orderBy('order');
+        return $this->hasMany(Lesson::class);
     }
 
     /**
